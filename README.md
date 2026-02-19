@@ -147,3 +147,4 @@ docker-compose up --build
 - **Frontend:** `cd frontend && npm install && npm run dev`
 
 
+# SMART-KILN-2
