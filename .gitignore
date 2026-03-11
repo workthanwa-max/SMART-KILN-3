@@ -1,0 +1,28 @@
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Dependencies
+node_modules/
+bun.lockb
+package-lock.json
+
+# Environment Secrets
+.env
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+out/
+build/
+
+# Databases (SQLite)
+*.sqlite
+*.sqlite-journal
+backup_*.sqlite
+
+# Logs
+logs/
+*.log

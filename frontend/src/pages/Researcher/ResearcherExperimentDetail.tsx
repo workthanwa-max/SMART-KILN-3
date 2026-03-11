@@ -39,15 +39,15 @@ export default function ResearcherExperimentDetail() {
     };
 
     if (loading) return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh', justifyContent: 'center', alignItems: 'center' }}>
-            <CircularProgress />
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh', justifyContent: 'center', alignItems: 'center' }}>
+            <CircularProgress thickness={5} size={60} />
         </Box>
     );
 
     if (!data) return <Typography>ไม่พบข้อมูล</Typography>;
 
     return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
             <Sidebar />
 
             <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
@@ -57,27 +57,30 @@ export default function ResearcherExperimentDetail() {
                             <Button
                                 startIcon={<ArrowBack />}
                                 onClick={() => navigate(-1)}
-                                sx={{ mb: 4, color: 'text.secondary', fontWeight: 700 }}
+                                sx={{ mb: 4, color: 'primary.main', fontWeight: 900, textTransform: 'none' }}
                             >
                                 กลับหน้ารายการ
                             </Button>
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 5 }}>
                                 <Box>
-                                    <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
-                                        รายละเอียดการเผาถ่าน #{data.experiment_id}
+                                    <Typography variant="h3" sx={{ fontWeight: 950, color: 'primary.main', letterSpacing: -1 }}>
+                                        รายละเอียดการวิจัย #{data.experiment_id}
                                     </Typography>
-                                    <Stack direction="row" spacing={2} alignItems="center">
+                                    <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 1 }}>
                                         <Chip
-                                            icon={<CalendarMonth />}
+                                            icon={<CalendarMonth sx={{ fontSize: '1rem !important' }} />}
                                             label={new Date(data.created_at).toLocaleString('th-TH')}
-                                            variant="outlined"
-                                            sx={{ borderRadius: 2, fontWeight: 600 }}
+                                            sx={{ borderRadius: 2.5, fontWeight: 900, bgcolor: 'white', border: '1px solid #EFEBE9' }}
                                         />
                                         <Chip
-                                            label={data.quality_grade ? "เสร็จสมบูรณ์" : "กำลังดำเนินการ"}
-                                            color={data.quality_grade ? "success" : "warning"}
-                                            sx={{ borderRadius: 2, fontWeight: 700 }}
+                                            label={data.quality_grade ? "ประเมินแล้ว" : "รอดำเนินการ"}
+                                            sx={{
+                                                borderRadius: 2.5,
+                                                fontWeight: 900,
+                                                bgcolor: data.quality_grade ? 'secondary.main' : 'warning.main',
+                                                color: '#fff'
+                                            }}
                                         />
                                     </Stack>
                                 </Box>
@@ -86,8 +89,8 @@ export default function ResearcherExperimentDetail() {
                             <Grid container spacing={4}>
                                 {/* Basic Info */}
                                 <Grid size={{ xs: 12, md: 4 }}>
-                                    <Paper sx={{ p: 3, borderRadius: 5, border: '1px solid #e2e8f0', height: '100%' }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 800, mb: 3 }}>ข้อมูลทั่วไป</Typography>
+                                    <Paper sx={{ p: 3, borderRadius: 6, border: '1px solid #EFEBE9', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', height: '100%' }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 950, mb: 3, color: 'primary.main' }}>ข้อมูลทั่วไป</Typography>
                                         <Stack spacing={3}>
                                             <Box>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, textTransform: 'uppercase' }}>เตาเผาที่ใช้</Typography>
@@ -109,12 +112,12 @@ export default function ResearcherExperimentDetail() {
 
                                 {/* Results Info */}
                                 <Grid size={{ xs: 12, md: 8 }}>
-                                    <Paper sx={{ p: 3, borderRadius: 5, border: '1px solid #e2e8f0' }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 800, mb: 3 }}>ผลการดำเนินงาน</Typography>
+                                    <Paper sx={{ p: 3, borderRadius: 6, border: '1px solid #EFEBE9' }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 950, mb: 3 }}>ผลการดำเนินงาน</Typography>
                                         <Grid container spacing={3}>
                                             <Grid size={{ xs: 6, sm: 1.5 }}>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>ถ่านรวม</Typography>
-                                                <Typography variant="h6" sx={{ fontWeight: 800, mt: 1 }}>{data.charcoal_weight || 0} <small>กก.</small></Typography>
+                                                <Typography variant="h6" sx={{ fontWeight: 950, mt: 1 }}>{data.charcoal_weight || 0} <small>กก.</small></Typography>
                                             </Grid>
                                             <Grid size={{ xs: 6, sm: 1.5 }}>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>Yield %</Typography>
@@ -124,19 +127,19 @@ export default function ResearcherExperimentDetail() {
                                             </Grid>
                                             <Grid size={{ xs: 6, sm: 1.5 }}>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>เวลาเผา</Typography>
-                                                <Typography variant="h6" sx={{ fontWeight: 800, mt: 1 }}>{data.burn_hours || 0} <small>ชม.</small></Typography>
+                                                <Typography variant="h6" sx={{ fontWeight: 950, mt: 1 }}>{data.burn_hours || 0} <small>ชม.</small></Typography>
                                             </Grid>
                                             <Grid size={{ xs: 6, sm: 1.5 }}>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>ความชื้นก่อนเผา</Typography>
-                                                <Typography variant="h6" sx={{ fontWeight: 800, mt: 1 }}>{data.initial_moisture || 'ไม่มีข้อมูล'}</Typography>
+                                                <Typography variant="h6" sx={{ fontWeight: 950, mt: 1 }}>{data.initial_moisture || 'ไม่มีข้อมูล'}</Typography>
                                             </Grid>
                                             <Grid size={{ xs: 6, sm: 1.5 }}>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>ความชื้นหลังเผา</Typography>
-                                                <Typography variant="h6" sx={{ fontWeight: 800, mt: 1 }}>{data.final_moisture || 'ไม่มีข้อมูล'}</Typography>
+                                                <Typography variant="h6" sx={{ fontWeight: 950, mt: 1 }}>{data.final_moisture || 'ไม่มีข้อมูล'}</Typography>
                                             </Grid>
                                             <Grid size={{ xs: 6, sm: 2 }}>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>จำนวนกระสอบ</Typography>
-                                                <Typography variant="h6" sx={{ fontWeight: 800, mt: 1 }}>{data.bag_count || 0} <small>ใบ</small></Typography>
+                                                <Typography variant="h6" sx={{ fontWeight: 950, mt: 1 }}>{data.bag_count || 0} <small>ใบ</small></Typography>
                                             </Grid>
                                             <Grid size={{ xs: 6, sm: 2.5 }}>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>คุณภาพถ่าน</Typography>
@@ -144,17 +147,17 @@ export default function ResearcherExperimentDetail() {
                                                     <Chip
                                                         label={data.quality_grade || 'รอดำเนินการ'}
                                                         color={getGradeColor(data.quality_grade)}
-                                                        sx={{ fontWeight: 800, fontSize: '0.9rem', height: 32 }}
+                                                        sx={{ fontWeight: 950, fontSize: '0.9rem', height: 32 }}
                                                     />
                                                 </Box>
                                             </Grid>
                                             <Grid size={{ xs: 6, sm: 2 }}>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>อุณหภูมิ</Typography>
-                                                <Typography variant="h6" sx={{ fontWeight: 800, mt: 1, color: '#ef4444' }}>{data.temperature || '-'} <small>°C</small></Typography>
+                                                <Typography variant="h6" sx={{ fontWeight: 950, mt: 1, color: '#ef4444' }}>{data.temperature || '-'} <small>°C</small></Typography>
                                             </Grid>
                                             <Grid size={{ xs: 6, sm: 2 }}>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>น้ำส้มควันไม้</Typography>
-                                                <Typography variant="h6" sx={{ fontWeight: 800, mt: 1, color: '#f59e0b' }}>{data.wood_vinegar_quantity || '-'} <small>ลิตร</small></Typography>
+                                                <Typography variant="h6" sx={{ fontWeight: 950, mt: 1, color: '#f59e0b' }}>{data.wood_vinegar_quantity || '-'} <small>ลิตร</small></Typography>
                                             </Grid>
                                         </Grid>
 
@@ -171,8 +174,8 @@ export default function ResearcherExperimentDetail() {
 
                                 {/* Materials Info */}
                                 <Grid size={{ xs: 12 }}>
-                                    <Paper sx={{ p: 3, borderRadius: 5, border: '1px solid #e2e8f0' }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 800, mb: 3 }}>วัตถุดิบที่ใช้ (ไม้ฟืน)</Typography>
+                                    <Paper sx={{ p: 3, borderRadius: 6, border: '1px solid #EFEBE9' }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 950, mb: 3 }}>วัตถุดิบที่ใช้ (ไม้ฟืน)</Typography>
                                         <Stack spacing={2}>
                                             {data.materials?.length === 0 ? (
                                                 <Typography color="text.secondary">ไม่มีข้อมูลวัตถุดิบ</Typography>
@@ -185,7 +188,7 @@ export default function ResearcherExperimentDetail() {
                                                             <Typography variant="caption" color="text.secondary">ความชื้น/สภาพ: {m.condition === 'dry' ? 'ไม้แห้ง' : m.condition === 'fresh' ? 'ไม้สด' : 'ไม่มีข้อมูล'}</Typography>
                                                         </Box>
                                                     </Stack>
-                                                    <Typography sx={{ fontWeight: 800, color: 'primary.main' }}>{m.quantity} กก.</Typography>
+                                                    <Typography sx={{ fontWeight: 950, color: 'primary.main' }}>{m.quantity} กก.</Typography>
                                                 </Paper>
                                             ))}
                                         </Stack>

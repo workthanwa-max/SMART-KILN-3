@@ -6,7 +6,7 @@ import {
     Alert, InputAdornment, Fade, IconButton, ToggleButton, ToggleButtonGroup
 } from '@mui/material';
 import { LocalFireDepartment, Forest, ArrowBack } from '@mui/icons-material';
-import { experimentApi } from '../../api';
+import { experimentApi, woodSpeciesApi } from '../../api';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../db/db';
 
@@ -17,7 +17,8 @@ export default function StartBurn() {
     const [error, setError] = useState('');
 
     const [selectedKiln, setSelectedKiln] = useState('');
-    const [woodType, setWoodType] = useState('ไม้เบญจพรรณ');
+    const [woodType, setWoodType] = useState('');
+    const [woodSpecies, setWoodSpecies] = useState<any[]>([]);
     const [woodQuantity, setWoodQuantity] = useState(50);
     const [initialMoisture, setInitialMoisture] = useState('ไม้สด');
 
@@ -33,6 +34,22 @@ export default function StartBurn() {
         const kilnIds = myAssignments.map(uk => uk.kiln_id);
         return db.kilns.where('kiln_id').anyOf(kilnIds).and(k => k.is_active === 1).toArray();
     }, [myAssignments]) || [];
+
+    const fetchWoodSpecies = async () => {
+        try {
+            const res = await woodSpeciesApi.getAll(true); // Get only active
+            setWoodSpecies(res.data);
+            if (res.data.length > 0) {
+                setWoodType(res.data[0].name);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        fetchWoodSpecies();
+    }, []);
 
     useEffect(() => {
         if (kilns.length > 0 && !selectedKiln) {
@@ -72,20 +89,20 @@ export default function StartBurn() {
     };
 
     if (fetchLoading) return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh', justifyContent: 'center', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh', justifyContent: 'center', alignItems: 'center' }}>
             <CircularProgress />
         </Box>
     );
 
     return (
-        <Box sx={{ bgcolor: '#f8fafc', minHeight: '100vh', pb: 4 }}>
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', pb: 4 }}>
             {/* Mobile Header */}
             <Box sx={{
-                bgcolor: 'white', borderBottom: '1px solid #e2e8f0', py: 2, px: 2,
-                position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', gap: 1
+                bgcolor: 'white', borderBottom: '1px solid #EFEBE9', py: 2.5, px: 2,
+                position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', gap: 2
             }}>
-                <IconButton onClick={() => navigate(-1)} size="small"><ArrowBack /></IconButton>
-                <Typography variant="h6" sx={{ fontWeight: 800 }}>เริ่มการเผาใหม่</Typography>
+                <IconButton onClick={() => navigate(-1)} size="large" sx={{ color: 'primary.main' }}><ArrowBack /></IconButton>
+                <Typography variant="h6" sx={{ fontWeight: 900, color: 'primary.main' }}>เริ่มการเผาใหม่</Typography>
             </Box>
 
             <Container maxWidth="sm" sx={{ mt: 3 }}>
@@ -124,9 +141,11 @@ export default function StartBurn() {
                                             startAdornment: <InputAdornment position="start"><Forest color="primary" fontSize="small" /></InputAdornment>,
                                             sx: { borderRadius: 3, bgcolor: '#f8fafc' }
                                         }}
+                                        disabled={woodSpecies.length === 0}
+                                        helperText={woodSpecies.length === 0 ? "ไม่พบข้อมูลพันธุ์ไม้ กรุณาติดต่อผู้วิจัย" : ""}
                                     >
-                                        {['ไม้เบญจพรรณ', 'ไม้โกงกาง', 'ไม้เงาะ', 'ไม้ยูคาลิปตัส'].map(opt => (
-                                            <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                                        {woodSpecies.map(opt => (
+                                            <MenuItem key={opt.species_id} value={opt.name}>{opt.name}</MenuItem>
                                         ))}
                                     </TextField>
                                 </Box>
@@ -154,8 +173,8 @@ export default function StartBurn() {
                                     />
                                 </Box>
 
-                                <Box sx={{ px: 1 }}>
-                                    <Typography variant="caption" sx={{ mb: 1.5, display: 'block', fontWeight: 800, color: 'text.secondary' }}>
+                                <Box sx={{ px: 1, mt: 3 }}>
+                                    <Typography variant="caption" sx={{ mb: 2.5, display: 'block', fontWeight: 800, color: 'text.secondary' }}>
                                         4. ความชื้นของเนื้อไม้ (ความรู้สึก)
                                     </Typography>
                                     <ToggleButtonGroup
@@ -168,6 +187,7 @@ export default function StartBurn() {
                                             '& .MuiToggleButton-root': {
                                                 borderRadius: 3, py: 1.5, fontWeight: 800,
                                                 border: '1px solid #e2e8f0',
+                                                margin: 0.5,
                                                 '&.Mui-selected': { bgcolor: 'primary.main', color: 'white' }
                                             }
                                         }}
@@ -182,8 +202,9 @@ export default function StartBurn() {
                                     fullWidth variant="contained" size="large" type="submit"
                                     disabled={loading}
                                     sx={{
-                                        py: 2, borderRadius: 4, fontWeight: 900, fontSize: '1.1rem',
-                                        boxShadow: '0 8px 16px rgba(37, 99, 235, 0.2)'
+                                        py: 2.5, borderRadius: 5, fontWeight: 900, fontSize: '1.4rem',
+                                        boxShadow: '0 12px 24px rgba(62, 39, 35, 0.2)',
+                                        mt: 2
                                     }}
                                 >
                                     {loading ? <CircularProgress size={24} color="inherit" /> : 'เริ่มการเผาถ่าน 🔥'}

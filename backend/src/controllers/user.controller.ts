@@ -4,21 +4,33 @@ export const UserController = {
     getAll: ({ user, set }: any) => {
         const baseQuery = "SELECT user_id, name, phone, role, is_active, created_at, must_change_password FROM users";
 
-        if (user.role === 'researcher') {
+        if (user.role === 'admin') {
             return db.query(`${baseQuery} ORDER BY created_at DESC`).all();
+        }
+
+        if (user.role === 'researcher') {
+            // Researchers cannot see Admins
+            return db.query(`${baseQuery} WHERE role != 'admin' ORDER BY created_at DESC`).all();
         }
 
         return db.query(`${baseQuery} WHERE user_id = ?`).all(user.id);
     },
 
     create: async ({ body, user, set }: any) => {
-        if (!user || user.role !== 'researcher') {
+        if (!user || (user.role !== 'researcher' && user.role !== 'admin')) {
             set.status = 403;
             return { error: "Forbidden" };
         }
 
         try {
             const { name, phone, role, password } = body;
+
+            // Researchers cannot create Admins
+            if (user.role === 'researcher' && role === 'admin') {
+                set.status = 403;
+                return { error: "นักวิจัยไม่ได้รับอนุญาตให้สร้างบัญชีผู้ดูแลระบบ" };
+            }
+
             const hashedPassword = await Bun.password.hash(password || "123456");
             const result = db.prepare(`
                 INSERT INTO users (name, phone, role, password, must_change_password) 
@@ -36,13 +48,33 @@ export const UserController = {
     },
 
     update: ({ params, body, user, set }: any) => {
-        if (!user || user.role !== 'researcher') {
+        if (!user || (user.role !== 'researcher' && user.role !== 'admin')) {
             set.status = 403;
             return { error: "Forbidden" };
         }
 
         try {
             const { name, phone, role } = body;
+
+            // Find target user role first
+            const target = db.prepare("SELECT role FROM users WHERE user_id = ?").get(params.id) as any;
+            if (!target) {
+                set.status = 404;
+                return { error: "ไม่พบผู้ใช้งาน" };
+            }
+
+            // Researchers cannot edit Admins
+            if (user.role === 'researcher' && target.role === 'admin') {
+                set.status = 403;
+                return { error: "นักวิจัยไม่สามารถแก้ไขข้อมูลของผู้ดูแลระบบได้" };
+            }
+
+            // Researchers cannot promote someone to Admin
+            if (user.role === 'researcher' && role === 'admin') {
+                set.status = 403;
+                return { error: "นักวิจัยไม่สามารถกำหนดสิทธิ์เป็นผู้ดูแลระบบได้" };
+            }
+
             const result = db.prepare(`
                 UPDATE users SET name = ?, phone = ?, role = ? 
                 WHERE user_id = ?
@@ -60,13 +92,21 @@ export const UserController = {
     },
 
     resetPassword: async ({ params, body, user, set }: any) => {
-        if (!user || user.role !== 'researcher') {
+        if (!user || (user.role !== 'researcher' && user.role !== 'admin')) {
             set.status = 403;
             return { error: "Forbidden" };
         }
 
         try {
             const { newPassword } = body;
+
+            // Check target
+            const target = db.prepare("SELECT role FROM users WHERE user_id = ?").get(params.id) as any;
+            if (user.role === 'researcher' && target?.role === 'admin') {
+                set.status = 403;
+                return { error: "นักวิจัยไม่สามารถรีเซ็ตรหัสผ่านของผู้ดูแลระบบได้" };
+            }
+
             const hashedPassword = await Bun.password.hash(newPassword);
             db.prepare("UPDATE users SET password = ?, must_change_password = 1 WHERE user_id = ?")
                 .run(hashedPassword, params.id);
@@ -79,9 +119,16 @@ export const UserController = {
     },
 
     toggleActive: ({ params, body, user, set }: any) => {
-        if (!user || user.role !== 'researcher') {
+        if (!user || (user.role !== 'researcher' && user.role !== 'admin')) {
             set.status = 403;
             return { error: "Forbidden" };
+        }
+
+        // Check target
+        const target = db.prepare("SELECT role FROM users WHERE user_id = ?").get(params.id) as any;
+        if (user.role === 'researcher' && target?.role === 'admin') {
+            set.status = 403;
+            return { error: "นักวิจัยไม่สามารถเปลี่ยนสถานะของผู้ดูแลระบบได้" };
         }
 
         const status = body.is_active ? 1 : 0;

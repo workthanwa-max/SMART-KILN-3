@@ -11,7 +11,7 @@ export const userRoutes = (app: Elysia) =>
                 body: t.Object({
                     name: t.String(),
                     phone: t.String(),
-                    role: t.String({ pattern: '^(researcher|operator)$' }),
+                    role: t.String({ pattern: '^(researcher|operator|admin)$' }),
                     password: t.Optional(t.String())
                 })
             })
@@ -21,7 +21,7 @@ export const userRoutes = (app: Elysia) =>
                 body: t.Object({
                     name: t.String(),
                     phone: t.String(),
-                    role: t.String({ pattern: '^(researcher|operator)$' })
+                    role: t.String({ pattern: '^(researcher|operator|admin)$' })
                 })
             })
 

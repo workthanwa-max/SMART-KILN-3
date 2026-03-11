@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.env
+*.sqlite
+*.sqlite-journal
+bun.lockb
+capacitor.config.ts
+android
+ios

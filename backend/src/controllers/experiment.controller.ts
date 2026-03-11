@@ -60,11 +60,17 @@ export const ExperimentController = {
     },
 
     // 3. เพิ่มวัตถุดิบ
-    addMaterial: ({ params, body, set }: any) => {
+    addMaterial: ({ params, body, user, set }: any) => {
         const { wood_type, quantity, condition } = body;
 
-        // เช็คก่อนว่ามี experiment นี้อยู่จริงไหม
-        const expExists = db.query("SELECT experiment_id FROM experiments WHERE experiment_id = ?").get(params.id);
+        // เช็คก่อนว่ามี experiment นี้อยู่จริงไหม (และเป็นเจ้าของ หรือเป็น Researcher)
+        let expExists;
+        if (user.role === 'researcher') {
+            expExists = db.query("SELECT experiment_id FROM experiments WHERE experiment_id = ?").get(params.id);
+        } else {
+            expExists = db.query("SELECT experiment_id FROM experiments WHERE experiment_id = ? AND operator_id = ?").get(params.id, user.id);
+        }
+
         if (!expExists) {
             set.status = 404;
             return { error: "ไม่พบรายการทดลองนี้" };
@@ -79,21 +85,37 @@ export const ExperimentController = {
     },
 
     // 4. บันทึกผลการทดลอง
-    updateResult: ({ params, body, set }: any) => {
-                const { charcoal_weight, bag_count, quality_grade, final_moisture, summary_note, burn_hours, wood_vinegar_quantity, temperature } = body;
-        
-                const result = db.prepare(`
-                    UPDATE experiments SET
-                        charcoal_weight = ?,
-                        bag_count = ?,
-                        quality_grade = ?,
-                        final_moisture = ?,
-                        summary_note = ?,
-                        burn_hours = ?,
-                        wood_vinegar_quantity = ?,
-                        temperature = ?
-                    WHERE experiment_id = ?
-                `).run(charcoal_weight, bag_count, quality_grade, final_moisture || null, summary_note, burn_hours, wood_vinegar_quantity || null, temperature || null, params.id);
+    updateResult: ({ params, body, user, set }: any) => {
+        const { charcoal_weight, bag_count, quality_grade, final_moisture, summary_note, burn_hours, wood_vinegar_quantity, temperature } = body;
+
+        let result;
+        if (user.role === 'researcher') {
+            result = db.prepare(`
+                        UPDATE experiments SET
+                            charcoal_weight = ?,
+                            bag_count = ?,
+                            quality_grade = ?,
+                            final_moisture = ?,
+                            summary_note = ?,
+                            burn_hours = ?,
+                            wood_vinegar_quantity = ?,
+                            temperature = ?
+                        WHERE experiment_id = ?
+                    `).run(charcoal_weight, bag_count, quality_grade, final_moisture || null, summary_note, burn_hours, wood_vinegar_quantity || null, temperature || null, params.id);
+        } else {
+            result = db.prepare(`
+                        UPDATE experiments SET
+                            charcoal_weight = ?,
+                            bag_count = ?,
+                            quality_grade = ?,
+                            final_moisture = ?,
+                            summary_note = ?,
+                            burn_hours = ?,
+                            wood_vinegar_quantity = ?,
+                            temperature = ?
+                        WHERE experiment_id = ? AND operator_id = ?
+                    `).run(charcoal_weight, bag_count, quality_grade, final_moisture || null, summary_note, burn_hours, wood_vinegar_quantity || null, temperature || null, params.id, user.id);
+        }
         if (result.changes === 0) {
             set.status = 404;
             return { error: "ไม่พบรายการทดลองที่ต้องการอัปเดต" };
@@ -103,15 +125,22 @@ export const ExperimentController = {
     },
 
     // 5. ดูรายละเอียด
-    getDetail: ({ params, set }: any) => {
-        const experiment = db.query(`
+    getDetail: ({ params, user, set }: any) => {
+        let experiment;
+
+        const baseQuery = `
             SELECT e.*, u.name as operator_name, k.name as kiln_name,
                    (SELECT SUM(quantity) FROM experiment_materials WHERE experiment_id = e.experiment_id) as total_wood_weight
             FROM experiments e
             JOIN users u ON e.operator_id = u.user_id
             JOIN kilns k ON e.kiln_id = k.kiln_id
-            WHERE e.experiment_id = ?
-        `).get(params.id) as any;
+        `;
+
+        if (user.role === 'researcher') {
+            experiment = db.query(`${baseQuery} WHERE e.experiment_id = ?`).get(params.id) as any;
+        } else {
+            experiment = db.query(`${baseQuery} WHERE e.experiment_id = ? AND e.operator_id = ?`).get(params.id, user.id) as any;
+        }
 
         if (!experiment) {
             set.status = 404;

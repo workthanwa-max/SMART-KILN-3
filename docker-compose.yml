@@ -3,12 +3,21 @@ services:
     build: ./backend
     ports:
       - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+      - ./backend/charcoal_project.sqlite:/usr/src/app/charcoal_project.sqlite
     environment:
       - PORT=3000
+      - NODE_ENV=production
+      - DATABASE_NAME=charcoal_project.sqlite
+    restart: always
 
   frontend:
     build: ./frontend
     ports:
       - "80:80"
+    environment:
+      - VITE_API_URL=http://localhost:3000
     depends_on:
       - backend
+    restart: always

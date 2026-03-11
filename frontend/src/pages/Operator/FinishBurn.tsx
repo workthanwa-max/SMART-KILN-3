@@ -61,24 +61,24 @@ export default function FinishBurn() {
     };
 
     return (
-        <Box sx={{ bgcolor: '#f8fafc', minHeight: '100vh', pb: 4 }}>
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', pb: 4 }}>
             {/* Header */}
             <Box sx={{
                 bgcolor: 'white',
-                borderBottom: '1px solid #e2e8f0',
-                py: 2,
+                borderBottom: '1px solid #EFEBE9',
+                py: 2.5,
                 px: 2,
                 position: 'sticky',
                 top: 0,
                 zIndex: 10,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1
+                gap: 2
             }}>
-                <IconButton onClick={() => navigate(-1)} size="small">
+                <IconButton onClick={() => navigate(-1)} size="large" sx={{ color: 'primary.main' }}>
                     <ArrowBack />
                 </IconButton>
-                <Typography variant="h6" sx={{ fontWeight: 800 }}>สรุปผลการเผา #{id}</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 900, color: 'primary.main' }}>สรุปผลการเผา #{id}</Typography>
             </Box>
 
             <Container maxWidth="sm" sx={{ mt: 3 }}>
@@ -166,8 +166,8 @@ export default function FinishBurn() {
                                     />
                                 </Box>
 
-                                <Box>
-                                    <Typography variant="caption" sx={{ mb: 1.5, display: 'block', fontWeight: 800, color: 'text.secondary' }}>ความชื้นของถ่าน (ความรู้สึก)</Typography>
+                                <Box sx={{ mt: 3 }}>
+                                    <Typography variant="caption" sx={{ mb: 2.5, display: 'block', fontWeight: 800, color: 'text.secondary' }}>ความชื้นของถ่าน (ความรู้สึก)</Typography>
                                     <ToggleButtonGroup
                                         value={finalMoisture}
                                         exclusive
@@ -177,6 +177,7 @@ export default function FinishBurn() {
                                         sx={{
                                             '& .MuiToggleButton-root': {
                                                 borderRadius: 3, py: 1.5, fontWeight: 800,
+                                                margin: 0.5,
                                                 border: '1px solid #e2e8f0',
                                                 '&.Mui-selected': { bgcolor: 'primary.main', color: 'white' }
                                             }
@@ -187,8 +188,8 @@ export default function FinishBurn() {
                                     </ToggleButtonGroup>
                                 </Box>
 
-                                <Box>
-                                    <Typography variant="caption" sx={{ mb: 1, display: 'block', fontWeight: 800, color: 'text.secondary' }}>คุณภาพถ่าน (เกรด)</Typography>
+                                <Box sx={{ mt: 3 }}>
+                                    <Typography variant="caption" sx={{ mb: 2.5, display: 'block', fontWeight: 800, color: 'text.secondary' }}>คุณภาพถ่าน (เกรด)</Typography>
                                     <ToggleButtonGroup
                                         value={quality}
                                         exclusive
@@ -198,6 +199,7 @@ export default function FinishBurn() {
                                         sx={{
                                             '& .MuiToggleButton-root': {
                                                 borderRadius: 3,
+                                                margin: 0.5,
                                                 py: 1.5,
                                                 fontWeight: 800,
                                                 border: '1px solid #e2e8f0',
@@ -237,10 +239,12 @@ export default function FinishBurn() {
                                     type="submit"
                                     disabled={loading}
                                     sx={{
-                                        py: 2,
-                                        borderRadius: 4,
+                                        py: 2.5,
+                                        borderRadius: 5,
                                         fontWeight: 900,
+                                        fontSize: '1.4rem',
                                         bgcolor: 'success.main',
+                                        boxShadow: '0 12px 24px rgba(67, 160, 71, 0.2)',
                                         '&:hover': { bgcolor: 'success.dark' },
                                     }}
                                 >

@@ -1,69 +1,57 @@
-import db from '../db';
+import { KilnService } from '../services/kiln.service';
+import { ResponseUtil } from '../utils/response';
 
 export const KilnController = {
     getAll: () => {
-        // ทุกคน (ทั้ง Researcher และ Operator) สามารถดูเตาได้
-        return db.query("SELECT * FROM kilns ORDER BY kiln_id DESC").all();
+        const data = KilnService.getAll();
+        return ResponseUtil.success(data);
     },
 
     create: ({ body, user, set }: any) => {
-        // เช็คสิทธิ์นักวิจัย
-        if (user.role !== 'researcher') {
+        if (!user || user.role !== 'researcher') {
             set.status = 403;
-            return { error: "สิทธิ์ไม่เพียงพอ: เฉพาะนักวิจัยเท่านั้นที่เพิ่มเตาได้" };
+            return ResponseUtil.error("คุณไม่มีสิทธิ์เข้าถึงส่วนนี้", "FORBIDDEN");
         }
 
         try {
-            const { name, location, latitude, longitude, note } = body;
-            const result = db.prepare(`
-                INSERT INTO kilns (name, location, latitude, longitude, note) 
-                VALUES (?, ?, ?, ?, ?)
-            `).run(name, location, latitude, longitude, note);
-
-            return {
-                success: true,
-                id: result.lastInsertRowid,
-                message: "สร้างเตาเผาใหม่เรียบร้อยแล้ว"
-            };
+            const id = KilnService.create(body);
+            return ResponseUtil.success({ kiln_id: id }, "สร้างข้อมูลเตาเผาสำเร็จ");
         } catch (error: any) {
             set.status = 500;
-            return { error: "ไม่สามารถสร้างข้อมูลได้: " + error.message };
+            return ResponseUtil.error(error.message);
         }
     },
 
     update: ({ params, body, user, set }: any) => {
-        if (user.role !== 'researcher') {
+        if (!user || user.role !== 'researcher') {
             set.status = 403;
-            return { error: "Forbidden" };
+            return ResponseUtil.error("คุณไม่มีสิทธิ์เข้าถึงส่วนนี้", "FORBIDDEN");
         }
 
-        const { name, location, latitude, longitude, note } = body;
-        const result = db.prepare(`
-            UPDATE kilns SET name = ?, location = ?, latitude = ?, longitude = ?, note = ? 
-            WHERE kiln_id = ?
-        `).run(name, location, latitude, longitude, note, params.id);
-
-        if (result.changes === 0) {
-            set.status = 404;
-            return { error: "ไม่พบเตาที่ต้องการแก้ไข" };
+        try {
+            const success = KilnService.update(params.id, body);
+            if (!success) {
+                set.status = 404;
+                return ResponseUtil.error("ไม่พบข้อมูลเตาเผาที่ต้องการแก้ไข", "NOT_FOUND");
+            }
+            return ResponseUtil.success(null, "อัปเดตข้อมูลเตาเผาสำเร็จ");
+        } catch (error: any) {
+            set.status = 500;
+            return ResponseUtil.error(error.message);
         }
-
-        return { success: true, message: "แก้ไขข้อมูลเตาเรียบร้อยแล้ว" };
     },
 
     toggleActive: ({ params, body, user, set }: any) => {
-        if (user.role !== 'researcher') {
+        if (!user || user.role !== 'researcher') {
             set.status = 403;
-            return { error: "Forbidden" };
+            return ResponseUtil.error("คุณไม่มีสิทธิ์เข้าถึงส่วนนี้", "FORBIDDEN");
         }
 
-        const status = body.is_active ? 1 : 0;
-        db.prepare("UPDATE kilns SET is_active = ? WHERE kiln_id = ?")
-            .run(status, params.id);
-
-        return {
-            success: true,
-            message: `เปลี่ยนสถานะเตาเป็น ${body.is_active ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}`
-        };
+        const success = KilnService.toggleActive(params.id, body.is_active);
+        if (!success) {
+            set.status = 404;
+            return ResponseUtil.error("ไม่พบข้อมูลเตาเผา", "NOT_FOUND");
+        }
+        return ResponseUtil.success(null, `สถานะเตาเผาถูกเปลี่ยนเป็น ${body.is_active ? 'เปิด' : 'ปิด'}การใช้งาน`);
     }
 };

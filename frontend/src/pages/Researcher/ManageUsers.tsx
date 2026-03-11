@@ -54,13 +54,14 @@ export default function ManageUsers() {
     }, []);
 
     const stats = {
-        total: users.length,
+        total: users.filter(u => (u.role as string) !== 'admin').length,
         researchers: users.filter(u => u.role === 'researcher').length,
         operators: users.filter(u => u.role === 'operator').length,
-        active: users.filter(u => u.is_active).length
+        active: users.filter(u => u.is_active && (u.role as string) !== 'admin').length
     };
 
     const filteredUsers = users.filter(u => {
+        if ((u.role as string) === 'admin') return false; // Safety first: Never show Admin to Researcher
         const matchesSearch = u.name.toLowerCase().includes(search.toLowerCase()) ||
             u.phone.includes(search);
         const matchesRole = filterRole === 'all' || u.role === filterRole;
@@ -146,22 +147,22 @@ export default function ManageUsers() {
     };
 
     return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
             <Sidebar />
 
             <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
                 <Container maxWidth="xl">
                     <Fade in timeout={600}>
-                        <Box>
+                        <Box sx={{ width: '100%', pb: 5 }}>
                             {/* Header */}
                             <Box sx={{ mb: 6 }}>
                                 <Grid container justifyContent="space-between" alignItems="center" spacing={3}>
                                     <Grid size={{ xs: 12, md: 8 }}>
-                                        <Typography variant="h3" sx={{ fontWeight: 950, color: '#0f172a', letterSpacing: -1 }}>
+                                        <Typography variant="h3" sx={{ fontWeight: 950, color: 'primary.main', letterSpacing: -1 }}>
                                             👥 จัดการสมาชิก
                                         </Typography>
-                                        <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 500, mt: 0.5, opacity: 0.8 }}>
-                                            บริหารจัดการบัญชีผู้ใช้งาน สิทธิ์การเข้าถึง และสถาณะระบบ
+                                        <Typography variant="h6" color="primary.main" sx={{ fontWeight: 700, mt: 0.5, opacity: 0.8 }}>
+                                            บริหารจัดการบัญชีผู้ใช้งาน สิทธิ์การเข้าถึง และสถานะระบบ
                                         </Typography>
                                     </Grid>
                                     <Grid size={{ xs: 12, md: 4 }} sx={{ textAlign: { md: 'right' } }}>
@@ -171,12 +172,12 @@ export default function ManageUsers() {
                                             startIcon={<PersonAdd />}
                                             onClick={() => setShowModal(true)}
                                             sx={{
-                                                borderRadius: 4,
+                                                borderRadius: 5,
                                                 px: 4,
                                                 py: 2,
-                                                fontWeight: 800,
+                                                fontWeight: 900,
                                                 fontSize: '1.1rem',
-                                                boxShadow: '0 8px 16px -4px rgba(59, 130, 246, 0.4)',
+                                                boxShadow: '0 8px 24px -6px rgba(62, 39, 35, 0.3)',
                                                 textTransform: 'none'
                                             }}
                                         >
@@ -205,18 +206,19 @@ export default function ManageUsers() {
                                             gap: 2.5
                                         }}>
                                             <Avatar sx={{
-                                                bgcolor: `${s.color}15`,
+                                                bgcolor: 'white',
                                                 color: s.color,
                                                 width: 56, height: 56,
-                                                borderRadius: 4
+                                                borderRadius: 4,
+                                                border: `1px solid ${s.color}20`
                                             }}>
                                                 {s.icon}
                                             </Avatar>
                                             <Box>
-                                                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                                <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, opacity: 0.7 }}>
                                                     {s.label}
                                                 </Typography>
-                                                <Typography variant="h4" sx={{ fontWeight: 900, color: '#1e293b' }}>
+                                                <Typography variant="h4" sx={{ fontWeight: 950, color: 'primary.main' }}>
                                                     {s.value}
                                                 </Typography>
                                             </Box>
@@ -289,13 +291,13 @@ export default function ManageUsers() {
 
                                 <TableContainer>
                                     <Table sx={{ minWidth: 800 }}>
-                                        <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                                        <TableHead sx={{ bgcolor: 'background.default' }}>
                                             <TableRow>
-                                                <TableCell sx={{ fontWeight: 800, color: '#64748b', py: 2.5 }}>ชื่อสมาชิก / UID</TableCell>
-                                                <TableCell sx={{ fontWeight: 800, color: '#64748b' }}>บทบาทหน้าที่</TableCell>
-                                                <TableCell sx={{ fontWeight: 800, color: '#64748b' }}>ติดต่อ</TableCell>
-                                                <TableCell sx={{ fontWeight: 800, color: '#64748b' }}>สถานะการใช้งาน</TableCell>
-                                                <TableCell align="right" sx={{ fontWeight: 800, color: '#64748b', pr: 4 }}>จัดการบัญชี</TableCell>
+                                                <TableCell sx={{ fontWeight: 900, color: 'primary.main', py: 2.5 }}>ชื่อสมาชิก / UID</TableCell>
+                                                <TableCell sx={{ fontWeight: 900, color: 'primary.main' }}>บทบาทหน้าที่</TableCell>
+                                                <TableCell sx={{ fontWeight: 900, color: 'primary.main' }}>ติดต่อ</TableCell>
+                                                <TableCell sx={{ fontWeight: 900, color: 'primary.main' }}>สถานะการใช้งาน</TableCell>
+                                                <TableCell align="right" sx={{ fontWeight: 900, color: 'primary.main', pr: 4 }}>จัดการบัญชี</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -318,12 +320,13 @@ export default function ManageUsers() {
                                                     <TableCell sx={{ py: 2.5 }}>
                                                         <Stack direction="row" spacing={2} alignItems="center">
                                                             <Avatar sx={{
-                                                                bgcolor: u.role === 'researcher' ? '#eff6ff' : '#f0fdf4',
-                                                                color: u.role === 'researcher' ? '#3b82f6' : '#10b981',
+                                                                bgcolor: u.role === 'researcher' ? 'primary.main' : 'secondary.main',
+                                                                color: 'white',
                                                                 width: 50, height: 50,
                                                                 borderRadius: 4,
                                                                 border: '2px solid',
-                                                                borderColor: 'divider'
+                                                                borderColor: 'divider',
+                                                                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
                                                             }}>
                                                                 {u.role === 'researcher' ? <Science /> : <Engineering />}
                                                             </Avatar>
@@ -347,7 +350,7 @@ export default function ManageUsers() {
                                                                 borderRadius: 1.5,
                                                                 letterSpacing: 0.5,
                                                                 fontSize: '0.7rem',
-                                                                bgcolor: u.role === 'researcher' ? '#3b82f6' : '#64748b',
+                                                                bgcolor: u.role === 'researcher' ? 'primary.main' : 'secondary.main',
                                                                 color: '#fff'
                                                             }}
                                                         />
@@ -388,7 +391,7 @@ export default function ManageUsers() {
                                                                         setFormData({ name: u.name, phone: u.phone, role: u.role, password: '' });
                                                                         setShowModal(true);
                                                                     }}
-                                                                    sx={{ bgcolor: '#f1f5f9', color: '#64748b', '&:hover': { bgcolor: 'primary.main', color: '#fff' } }}
+                                                                    sx={{ bgcolor: 'background.default', color: 'secondary.main', '&:hover': { bgcolor: 'secondary.main', color: '#fff' } }}
                                                                 >
                                                                     <Edit fontSize="small" />
                                                                 </IconButton>
@@ -403,14 +406,15 @@ export default function ManageUsers() {
                             </Paper>
                         </Box>
                     </Fade>
-                </Container>
-            </Box>
+                </Container >
+            </Box >
 
             {/* Modal Form */}
-            <Dialog
+            < Dialog
                 open={showModal} onClose={closeModal}
                 fullWidth maxWidth="xs"
-                PaperProps={{ sx: { borderRadius: 6, p: 1, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' } }}
+                PaperProps={{ sx: { borderRadius: 6, p: 1, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' } }
+                }
             >
                 <Box component="form" onSubmit={handleSubmit}>
                     <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', pt: 3, px: 3, fontSize: '1.5rem' }}>
@@ -480,10 +484,10 @@ export default function ManageUsers() {
                         </Button>
                     </DialogActions>
                 </Box>
-            </Dialog>
+            </Dialog >
 
             {/* Reset Password Modal */}
-            <Dialog
+            < Dialog
                 open={showResetModal} onClose={closeResetModal}
                 fullWidth maxWidth="xs"
                 PaperProps={{ sx: { borderRadius: 6, p: 1 } }}
@@ -515,8 +519,8 @@ export default function ManageUsers() {
                         </Button>
                     </DialogActions>
                 </Box>
-            </Dialog>
-        </Box>
+            </Dialog >
+        </Box >
     );
 }
 

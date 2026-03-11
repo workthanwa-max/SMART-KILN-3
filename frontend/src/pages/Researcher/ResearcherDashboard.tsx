@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
     Box, Container, Typography, Grid, Paper, Stack,
-    CircularProgress, Fade, Avatar, Button, useTheme,
+    CircularProgress, Fade, Avatar, Button,
     Chip, LinearProgress
 } from '@mui/material';
 import {
@@ -9,8 +9,8 @@ import {
     Science,
     Group,
     CalendarMonth,
-    MonitorHeart,
     QueryStats,
+    MonitorHeart,
     CheckCircle,
     AccessTime,
     ChevronRight,
@@ -24,7 +24,6 @@ import Sidebar from '../../components/Sidebar';
 const drawerWidth = 280;
 
 export default function ResearcherDashboard() {
-    const theme = useTheme();
     const navigate = useNavigate();
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -37,7 +36,7 @@ export default function ResearcherDashboard() {
     }, []);
 
     if (loading) return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh', justifyContent: 'center', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh', justifyContent: 'center', alignItems: 'center' }}>
             <CircularProgress thickness={5} size={60} />
         </Box>
     );
@@ -54,7 +53,7 @@ export default function ResearcherDashboard() {
     ];
 
     return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
             <Sidebar />
 
             <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
@@ -64,11 +63,11 @@ export default function ResearcherDashboard() {
                             {/* Header Section */}
                             <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                 <Box>
-                                    <Typography variant="h3" sx={{ fontWeight: 900, color: '#0f172a', letterSpacing: -1, mb: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
-                                        <Science sx={{ fontSize: 45, color: 'primary.main' }} />
+                                    <Typography variant="h3" sx={{ fontWeight: 900, color: 'primary.main', letterSpacing: -1, mb: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <Science sx={{ fontSize: 45, color: 'secondary.main' }} />
                                         Researcher Dashboard
                                     </Typography>
-                                    <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 500, opacity: 0.8, ml: 1 }}>
+                                    <Typography variant="h6" color="primary.main" sx={{ fontWeight: 700, opacity: 0.8, ml: 1 }}>
                                         ภาพรวมระบบวิจัยและติดตามการปฏิบัติงานรายวัน
                                     </Typography>
                                 </Box>
@@ -106,17 +105,18 @@ export default function ResearcherDashboard() {
                                             '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 20px -10px rgba(0,0,0,0.08)' }
                                         }}>
                                             <Avatar sx={{
-                                                bgcolor: kpi.bg,
+                                                bgcolor: 'background.default',
                                                 color: kpi.color,
                                                 width: 64, height: 64,
                                                 borderRadius: '20px',
-                                                fontSize: '2rem'
+                                                fontSize: '2rem',
+                                                border: `1px solid ${kpi.bg}`
                                             }}>{kpi.icon}</Avatar>
                                             <Box>
                                                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>
                                                     {kpi.label}
                                                 </Typography>
-                                                <Typography variant="h4" sx={{ fontWeight: 900, color: '#1e293b' }}>
+                                                <Typography variant="h4" sx={{ fontWeight: 900, color: 'primary.main' }}>
                                                     {kpi.value}
                                                 </Typography>
                                             </Box>
@@ -252,14 +252,14 @@ export default function ResearcherDashboard() {
                                         <Paper sx={{
                                             p: 4,
                                             borderRadius: 6,
-                                            bgcolor: theme.palette.primary.main,
+                                            bgcolor: 'primary.main',
                                             color: 'white',
-                                            boxShadow: '0 20px 25px -5px rgba(59, 130, 246, 0.25)',
+                                            boxShadow: '0 20px 40px -10px rgba(62, 39, 35, 0.3)',
                                             position: 'relative',
                                             overflow: 'hidden'
                                         }}>
-                                            <Typography variant="h5" sx={{ fontWeight: 800, mb: 1.5, position: 'relative', zIndex: 1 }}>การจัดการข้อมูล</Typography>
-                                            <Typography variant="body2" sx={{ opacity: 0.9, mb: 4, position: 'relative', zIndex: 1 }}>
+                                            <Typography variant="h5" sx={{ fontWeight: 900, mb: 1.5, position: 'relative', zIndex: 1 }}>การจัดการข้อมูล</Typography>
+                                            <Typography variant="body2" sx={{ opacity: 0.9, mb: 4, position: 'relative', zIndex: 1, fontWeight: 600 }}>
                                                 เริ่มต้นมอบหมายเตาและจัดการบุคลากรเพื่อขับเคลื่อนงานวิจัยของคุณ
                                             </Typography>
 
@@ -267,14 +267,14 @@ export default function ResearcherDashboard() {
                                                 <Button
                                                     variant="contained" fullWidth
                                                     onClick={() => navigate('/assign-kilns')}
-                                                    sx={{ bgcolor: 'white', color: 'primary.main', borderRadius: 3, py: 1.2, fontWeight: 800, '&:hover': { bgcolor: '#f8fafc' } }}
+                                                    sx={{ bgcolor: 'white', color: 'primary.main', borderRadius: 4, py: 1.5, fontWeight: 900, '&:hover': { bgcolor: 'background.default' } }}
                                                 >
                                                     มอบหมายงานใหม่
                                                 </Button>
                                                 <Button
                                                     variant="contained" fullWidth
                                                     onClick={() => navigate('/manage-users')}
-                                                    sx={{ bgcolor: 'rgba(255,255,255,0.15)', color: 'white', borderRadius: 3, py: 1.2, fontWeight: 700, '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' } }}
+                                                    sx={{ bgcolor: 'rgba(255,255,255,0.15)', color: 'white', borderRadius: 4, py: 1.5, fontWeight: 800, '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' } }}
                                                 >
                                                     จัดการสมาชิก
                                                 </Button>

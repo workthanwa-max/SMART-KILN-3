@@ -1,13 +1,51 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&family=Sarabun:wght@300;400;500;600;700;800&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Base Design System */
+:root {
+    --primary-charcoal: #3E2723;
+    --secondary-forest: #2E7D32;
+    --bg-cream: #FDFBF7;
+}
 
 body {
     margin: 0;
-    font-family: 'Inter', 'Kanit', sans-serif;
+    font-family: 'Kanit', 'Sarabun', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #f7f9fc;
+    background-color: var(--bg-cream);
+    color: #2C1810;
+    /* Subtle Grain/Noise Texture */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+    background-size: 150px 150px;
+}
+
+/* Custom Scrollbar for Earth Theme */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-cream);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #D7CCC8;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #A1887F;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.large-button {
+    font-size: 1.25rem;
+    padding: 1rem 2rem;
+    border-radius: 20px;
 }

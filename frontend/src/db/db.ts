@@ -4,7 +4,7 @@ export interface User {
     user_id?: number;
     name: string;
     phone: string;
-    role: 'researcher' | 'operator';
+    role: 'admin' | 'researcher' | 'operator';
     is_active: number;
     must_change_password?: number;
     sync_status?: 'synced' | 'pending_create' | 'pending_update';
@@ -14,8 +14,8 @@ export interface Kiln {
     kiln_id?: number;
     name: string;
     location: string;
-    latitude?: number;
-    longitude?: number;
+    latitude?: string;
+    longitude?: string;
     note: string;
     is_active: number;
     sync_status?: 'synced' | 'pending_create' | 'pending_update';

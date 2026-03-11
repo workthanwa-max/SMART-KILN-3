@@ -57,7 +57,7 @@ export default function AnnualReport() {
     } = data || {};
 
     return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
             <Sidebar />
 
             <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
@@ -67,10 +67,10 @@ export default function AnnualReport() {
                             {/* Header Section */}
                             <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 3 }}>
                                 <Box>
-                                    <Typography variant="h3" sx={{ fontWeight: 950, color: '#0f172a', letterSpacing: -1.5 }}>
+                                    <Typography variant="h3" sx={{ fontWeight: 950, color: 'primary.main', letterSpacing: -1.5 }}>
                                         📊 สรุปรายงานประจำปี
                                     </Typography>
-                                    <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 500, mt: 0.5 }}>
+                                    <Typography variant="h6" color="primary.main" sx={{ fontWeight: 700, mt: 0.5, opacity: 0.8 }}>
                                         ภาพรวมการผลิตถ่านวิจัยและสถิติสะสมรายเดือน
                                     </Typography>
                                 </Box>
@@ -97,10 +97,10 @@ export default function AnnualReport() {
                             {/* KPI Grid */}
                             <Grid container spacing={3} sx={{ mb: 6 }}>
                                 {[
-                                    { label: 'น้ำหนักถ่านรวม', value: summary?.total_weight?.toLocaleString() || '0', unit: 'กก.', icon: <LocalFireDepartment />, color: '#f59e0b', sub: 'รวมทุกเกรดคุณภาพ' },
-                                    { label: 'จำนวนการเผา', value: summary?.experiments || '0', unit: 'ครั้ง', icon: <HistoryEdu />, color: '#3b82f6', sub: 'รายการที่เสร็จสมบูรณ์' },
-                                    { label: 'ประมาณการคาร์บอนเครดิต', value: summary?.carbon_credits?.toFixed(3) || '0.000', unit: 'tCO2e', icon: <Co2 />, color: '#10b981', sub: 'ค่ากักเก็บก๊าซเรือนกระจก' },
-                                    { label: 'ชั่วโมงการทำงานสะสม', value: summary?.total_hours?.toLocaleString() || '0', unit: 'ชม.', icon: <Opacity />, color: '#6366f1', sub: 'ระยะเวลาใช้งานเตาทั้งหมด' },
+                                    { label: 'น้ำหนักถ่านรวม', value: summary?.total_weight?.toLocaleString() || '0', unit: 'กก.', icon: <LocalFireDepartment />, color: 'secondary.main', sub: 'รวมทุกเกรดคุณภาพ' },
+                                    { label: 'จำนวนการเผา', value: summary?.experiments || '0', unit: 'ครั้ง', icon: <HistoryEdu />, color: 'primary.main', sub: 'รายการที่เสร็จสมบูรณ์' },
+                                    { label: 'ประมาณการคาร์บอนเครดิต', value: summary?.carbon_credits?.toFixed(3) || '0.000', unit: 'tCO2e', icon: <Co2 />, color: '#795548', sub: 'ค่ากักเก็บก๊าซเรือนกระจก' },
+                                    { label: 'ชั่วโมงการทำงานสะสม', value: summary?.total_hours?.toLocaleString() || '0', unit: 'ชม.', icon: <Opacity />, color: '#5D4037', sub: 'ระยะเวลาใช้งานเตาทั้งหมด' },
                                 ].map((kpi, idx) => (
                                     <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={idx}>
                                         <Paper sx={{
@@ -109,22 +109,22 @@ export default function AnnualReport() {
                                             height: '100%', position: 'relative', overflow: 'hidden',
                                             '&:hover': { transform: 'translateY(-4px)', transition: '0.3s' }
                                         }}>
-                                            <Avatar sx={{ bgcolor: `${kpi.color}15`, color: kpi.color, width: 56, height: 56, borderRadius: 4 }}>
+                                            <Avatar sx={{ bgcolor: 'white', color: kpi.color, width: 56, height: 56, borderRadius: 4, border: '1px solid #EFEBE9' }}>
                                                 {kpi.icon}
                                             </Avatar>
                                             <Box>
-                                                <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                                <Typography variant="body2" sx={{ color: 'primary.main', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, opacity: 0.7 }}>
                                                     {kpi.label}
                                                 </Typography>
                                                 <Stack direction="row" spacing={1} alignItems="baseline">
-                                                    <Typography variant="h3" sx={{ fontWeight: 950, color: '#1e293b' }}>
+                                                    <Typography variant="h3" sx={{ fontWeight: 950, color: 'primary.main' }}>
                                                         {kpi.value}
                                                     </Typography>
-                                                    <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#94a3b8' }}>
+                                                    <Typography variant="subtitle1" sx={{ fontWeight: 800, color: 'text.secondary' }}>
                                                         {kpi.unit}
                                                     </Typography>
                                                 </Stack>
-                                                <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 600 }}>
+                                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>
                                                     {kpi.sub}
                                                 </Typography>
                                             </Box>
@@ -263,9 +263,9 @@ export default function AnnualReport() {
                                 {/* Carbon Credit Detail Card */}
                                 <Grid size={{ xs: 12 }}>
                                     <Paper sx={{
-                                        p: 4, borderRadius: 8, bgcolor: '#10b981', color: '#fff',
-                                        background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                                        boxShadow: '0 20px 40px -10px rgba(16, 185, 129, 0.4)',
+                                        p: 4, borderRadius: 8, bgcolor: 'primary.main', color: '#fff',
+                                        background: 'linear-gradient(135deg, var(--primary-charcoal) 0%, #3E2723 100%)',
+                                        boxShadow: '0 20px 40px -10px rgba(62, 39, 35, 0.4)',
                                         border: 'none',
                                         position: 'relative',
                                         overflow: 'hidden'

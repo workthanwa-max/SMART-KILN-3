@@ -97,7 +97,7 @@ export default function AssignKilns() {
     };
 
     return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
             <Sidebar />
 
             <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
@@ -108,26 +108,26 @@ export default function AssignKilns() {
                             <Box sx={{ mb: 6 }}>
                                 <Grid container justifyContent="space-between" alignItems="center" spacing={3}>
                                     <Grid size={{ xs: 12, md: 8 }}>
-                                        <Typography variant="h3" sx={{ fontWeight: 950, color: '#0f172a', letterSpacing: -1 }}>
+                                        <Typography variant="h3" sx={{ fontWeight: 950, color: 'primary.main', letterSpacing: -1 }}>
                                             🔗 การมอบหมายงาน
                                         </Typography>
-                                        <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 500, mt: 0.5, opacity: 0.8 }}>
+                                        <Typography variant="h6" color="primary.main" sx={{ fontWeight: 700, mt: 0.5, opacity: 0.8 }}>
                                             บริหารจัดการความรับผิดชอบ และจับคู่พนักงานกับเตาเผาในระบบ
                                         </Typography>
                                     </Grid>
                                     <Grid size={{ xs: 12, md: 4 }} sx={{ textAlign: { md: 'right' } }}>
                                         <Paper sx={{
-                                            p: 2, borderRadius: 4, bgcolor: '#fff', border: '1px solid #e2e8f0',
-                                            display: 'inline-flex', alignItems: 'center', gap: 2, boxShadow: 'none'
+                                            p: 2, borderRadius: 4, bgcolor: '#fff', border: '1px solid #EFEBE9',
+                                            display: 'inline-flex', alignItems: 'center', gap: 2, boxShadow: '0 4px 10px rgba(0,0,0,0.03)'
                                         }}>
-                                            <Avatar sx={{ bgcolor: '#eff6ff', color: 'primary.main', width: 44, height: 44 }}>
+                                            <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', width: 44, height: 44 }}>
                                                 <AssignmentInd />
                                             </Avatar>
                                             <Box sx={{ textAlign: 'left' }}>
-                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#94a3b8', display: 'block' }}>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: 'primary.main', display: 'block', opacity: 0.6 }}>
                                                     พนักงานทั้งหมด
                                                 </Typography>
-                                                <Typography variant="h6" sx={{ fontWeight: 900, lineHeight: 1 }}>
+                                                <Typography variant="h6" sx={{ fontWeight: 950, lineHeight: 1, color: 'primary.main' }}>
                                                     {stats.totalOps} คน
                                                 </Typography>
                                             </Box>
@@ -188,11 +188,11 @@ export default function AssignKilns() {
                                                                 transition: 'all 0.2s',
                                                                 borderLeft: '4px solid transparent',
                                                                 '&.Mui-selected': {
-                                                                    bgcolor: '#eff6ff',
-                                                                    borderLeftColor: 'primary.main',
-                                                                    '&:hover': { bgcolor: '#dbeafe' }
+                                                                    bgcolor: '#FDF7F2',
+                                                                    borderLeftColor: 'secondary.main',
+                                                                    '&:hover': { bgcolor: '#FBE9E7' }
                                                                 },
-                                                                '&:hover': { bgcolor: '#f1f5f9' }
+                                                                '&:hover': { bgcolor: '#F5F5F5' }
                                                             }}
                                                         >
                                                             <ListItemIcon>
@@ -254,8 +254,8 @@ export default function AssignKilns() {
                                         }}>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 5 }}>
                                                 <Box>
-                                                    <Typography variant="h4" sx={{ fontWeight: 950, color: '#1e293b', mb: 1 }}>
-                                                        จัดการเตา <Box component="span" sx={{ color: 'primary.main' }}>@{selectedOp.name}</Box>
+                                                    <Typography variant="h4" sx={{ fontWeight: 950, color: 'primary.main', mb: 1 }}>
+                                                        จัดการเตา <Box component="span" sx={{ color: 'secondary.main' }}>@{selectedOp.name}</Box>
                                                     </Typography>
                                                     <Chip
                                                         icon={<Badge sx={{ fontSize: '1rem !important' }} />}
@@ -354,12 +354,12 @@ export default function AssignKilns() {
                                                             onClick={handleAddKiln}
                                                             disabled={!targetKilnId}
                                                             sx={{
-                                                                borderRadius: 3, height: '100%',
-                                                                fontWeight: 900, fontSize: '1.05rem',
-                                                                boxShadow: '0 8px 16px -4px rgba(59, 130, 246, 0.4)'
+                                                                borderRadius: 4, height: '100%',
+                                                                fontWeight: 950, fontSize: '1.05rem',
+                                                                boxShadow: '0 8px 24px -6px rgba(62, 39, 35, 0.3)'
                                                             }}
                                                         >
-                                                            เพิ่มงาน
+                                                            มอบหมายงาน
                                                         </Button>
                                                     </Grid>
                                                 </Grid>

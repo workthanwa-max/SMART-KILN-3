@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Box, Drawer, List, ListItem, ListItemButton,
     ListItemIcon, ListItemText, Typography, Divider,
-    Avatar, Stack, Tooltip, Paper
+    Avatar, Stack, Tooltip, Paper,
+    Dialog, DialogTitle, DialogContent, DialogActions, Button
 } from '@mui/material';
 import {
     Dashboard,
@@ -10,11 +12,14 @@ import {
     People,
     LocalFireDepartment,
     Assignment,
-    Logout,
     History,
     AddCircleOutline,
     AccountCircle,
-    BarChart
+    BarChart,
+    Map,
+    Forest,
+    Logout,
+    WarningAmber
 } from '@mui/icons-material';
 
 const drawerWidth = 280;
@@ -24,6 +29,7 @@ export default function Sidebar() {
     const location = useLocation();
     const userRole = localStorage.getItem('user_role');
     const userName = localStorage.getItem('user_name') || 'User';
+    const [logoutOpen, setLogoutOpen] = useState(false);
 
     const handleLogout = () => {
         localStorage.clear();
@@ -36,129 +42,156 @@ export default function Sidebar() {
         { text: 'Dashboard', icon: <Dashboard />, path: '/researcher-dashboard' },
         { text: 'สรุปรายงานประจำปี', icon: <BarChart />, path: '/annual-report' },
         { text: 'รายการการเผาทั้งหมด', icon: <Science />, path: '/master-list' },
+        { text: 'แผนที่เตาเผา', icon: <Map />, path: '/kiln-map' },
         { text: 'จัดการสมาชิก', icon: <People />, path: '/manage-users' },
         { text: 'จัดการเตาเผา', icon: <LocalFireDepartment />, path: '/manage-kilns' },
+        { text: 'จัดการพันธุ์ไม้', icon: <Forest />, path: '/manage-wood-species' },
         { text: 'มอบหมายงาน', icon: <Assignment />, path: '/assign-kilns' },
+        { text: 'โปรไฟล์ของฉัน', icon: <AccountCircle />, path: '/profile' },
     ];
 
     const operatorLinks = [
         { text: 'Dashboard', icon: <Dashboard />, path: '/operator/dashboard' },
         { text: 'เริ่มการเผาถ่าน', icon: <AddCircleOutline />, path: '/operator/start-burn' },
         { text: 'ประวัติของฉัน', icon: <History />, path: '/operator/history' },
+        { text: 'โปรไฟล์ของฉัน', icon: <AccountCircle />, path: '/profile' },
     ];
 
     const links = userRole === 'researcher' ? researcherLinks : operatorLinks;
 
     return (
-        <Drawer
-            variant="permanent"
-            sx={{
-                width: drawerWidth,
-                flexShrink: 0,
-                display: { xs: 'none', sm: 'block' },
-                '& .MuiDrawer-paper': {
+        <>
+            <Drawer
+                variant="permanent"
+                sx={{
                     width: drawerWidth,
-                    boxSizing: 'border-box',
-                    borderRight: '1px solid #e2e8f0',
-                    bgcolor: '#ffffff'
-                },
-            }}
-        >
-            <Box sx={{ p: 4, textAlign: 'center' }}>
-                <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="center">
-                    <Box sx={{
-                        bgcolor: 'primary.main',
-                        color: 'white',
-                        p: 1,
-                        borderRadius: 2,
-                        display: 'flex'
-                    }}>
-                        <LocalFireDepartment />
-                    </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: '#0f172a' }}>
-                        SMART KILN
-                    </Typography>
-                </Stack>
-            </Box>
-
-            <Divider sx={{ mx: 2, opacity: 0.5 }} />
-
-            <Box sx={{ p: 3 }}>
-                <Paper elevation={0} sx={{
-                    p: 2,
-                    borderRadius: 4,
-                    bgcolor: '#f8fafc',
-                    border: '1px solid #f1f5f9'
-                }}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                        <Avatar sx={{ bgcolor: 'secondary.main', width: 40, height: 40 }}>
-                            <AccountCircle />
-                        </Avatar>
-                        <Box sx={{ overflow: 'hidden' }}>
-                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#1e293b' }} noWrap>
-                                {userName}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase' }}>
-                                {userRole}
-                            </Typography>
+                    flexShrink: 0,
+                    display: { xs: 'none', sm: 'block' },
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                        borderRight: '1px solid #EFEBE9',
+                        bgcolor: '#ffffff'
+                    },
+                }}
+            >
+                <Box sx={{ p: 4, textAlign: 'center' }}>
+                    <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="center">
+                        <Box sx={{
+                            bgcolor: 'primary.main',
+                            color: 'white',
+                            p: 1.2,
+                            borderRadius: 3,
+                            display: 'flex',
+                            boxShadow: '0 4px 12px rgba(62, 39, 35, 0.2)'
+                        }}>
+                            <LocalFireDepartment />
                         </Box>
+                        <Typography variant="h6" sx={{ fontWeight: 900, color: 'primary.main', letterSpacing: -0.5 }}>
+                            SMART KILN
+                        </Typography>
                     </Stack>
-                </Paper>
-            </Box>
+                </Box>
 
-            <List sx={{ px: 2, mt: 1 }}>
-                {links.map((item) => (
-                    <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+                <Divider sx={{ mx: 2, opacity: 0.5 }} />
+
+                <Box sx={{ p: 3 }}>
+                    <Paper elevation={0} sx={{
+                        p: 2,
+                        borderRadius: 5,
+                        bgcolor: 'background.default',
+                        border: '1px solid #EFEBE9'
+                    }}>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                            <Avatar sx={{ bgcolor: 'secondary.main', width: 44, height: 44, boxShadow: '0 4px 10px rgba(46, 125, 50, 0.2)' }}>
+                                <AccountCircle />
+                            </Avatar>
+                            <Box sx={{ overflow: 'hidden' }}>
+                                <Typography variant="body2" sx={{ fontWeight: 800, color: 'primary.main' }} noWrap>
+                                    {userName}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', fontSize: '0.65rem', letterSpacing: 0.5 }}>
+                                    {userRole}
+                                </Typography>
+                            </Box>
+                        </Stack>
+                    </Paper>
+                </Box>
+
+                <List sx={{ px: 2, mt: 1 }}>
+                    {links.map((item) => (
+                        <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+                            <ListItemButton
+                                onClick={() => navigate(item.path)}
+                                sx={{
+                                    borderRadius: 4,
+                                    py: 1.8,
+                                    px: 2.5,
+                                    bgcolor: isActive(item.path) ? 'rgba(90, 108, 87, 0.08)' : 'transparent',
+                                    color: isActive(item.path) ? 'primary.dark' : 'text.secondary',
+                                    '&:hover': {
+                                        bgcolor: isActive(item.path) ? 'rgba(90, 108, 87, 0.12)' : 'background.default',
+                                    },
+                                    transition: 'all 0.2s',
+                                }}
+                            >
+                                <ListItemIcon sx={{
+                                    minWidth: 40,
+                                    color: isActive(item.path) ? 'primary.dark' : 'text.secondary',
+                                    opacity: isActive(item.path) ? 1 : 0.7
+                                }}>
+                                    {item.icon}
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={item.text}
+                                    primaryTypographyProps={{
+                                        sx: { fontWeight: isActive(item.path) ? 900 : 700, fontSize: '0.95rem' }
+                                    }}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
+                </List>
+
+                <Box sx={{ mt: 'auto', p: 3 }}>
+                    <Divider sx={{ mb: 2, opacity: 0.5 }} />
+                    <Tooltip title="ออกจากระบบ">
                         <ListItemButton
-                            onClick={() => navigate(item.path)}
+                            onClick={() => setLogoutOpen(true)}
                             sx={{
                                 borderRadius: 3,
-                                py: 1.5,
-                                bgcolor: isActive(item.path) ? 'primary.light' : 'transparent',
-                                color: isActive(item.path) ? 'primary.main' : '#64748b',
-                                '&:hover': {
-                                    bgcolor: isActive(item.path) ? 'primary.light' : '#f1f5f9',
-                                },
+                                color: 'error.main',
+                                '&:hover': { bgcolor: '#FFF5F5' }
                             }}
                         >
-                            <ListItemIcon sx={{
-                                minWidth: 40,
-                                color: isActive(item.path) ? 'primary.main' : '#94a3b8'
-                            }}>
-                                {item.icon}
+                            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                                <Logout />
                             </ListItemIcon>
                             <ListItemText
-                                primary={item.text}
-                                primaryTypographyProps={{
-                                    sx: { fontWeight: isActive(item.path) ? 700 : 600, fontSize: '0.9rem' }
-                                }}
+                                primary="ออกจากระบบ"
+                                primaryTypographyProps={{ sx: { fontWeight: 700, fontSize: '0.9rem' } }}
                             />
                         </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
+                    </Tooltip>
+                </Box>
+            </Drawer>
 
-            <Box sx={{ mt: 'auto', p: 3 }}>
-                <Divider sx={{ mb: 2, opacity: 0.5 }} />
-                <Tooltip title="ออกจากระบบ">
-                    <ListItemButton
-                        onClick={handleLogout}
-                        sx={{
-                            borderRadius: 3,
-                            color: 'error.main',
-                            '&:hover': { bgcolor: '#fef2f2' }
-                        }}
-                    >
-                        <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-                            <Logout />
-                        </ListItemIcon>
-                        <ListItemText
-                            primary="ออกจากระบบ"
-                            primaryTypographyProps={{ sx: { fontWeight: 700, fontSize: '0.9rem' } }}
-                        />
-                    </ListItemButton>
-                </Tooltip>
-            </Box>
-        </Drawer>
+            {/* Logout Confirmation Dialog */}
+            <Dialog open={logoutOpen} onClose={() => setLogoutOpen(false)} PaperProps={{ sx: { borderRadius: 5, p: 1 } }}>
+                <DialogTitle sx={{ fontWeight: 900, color: 'primary.main', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <WarningAmber sx={{ color: 'error.main' }} />
+                    ออกจากระบบ
+                </DialogTitle>
+                <DialogContent>
+                    <Typography sx={{ fontWeight: 600, color: 'text.secondary' }}>
+                        คุณต้องการออกจากระบบใช่หรือไม่?
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+                    <Button onClick={() => setLogoutOpen(false)} variant="outlined" sx={{ borderRadius: 3, fontWeight: 800, textTransform: 'none' }}>ยกเลิก</Button>
+                    <Button onClick={handleLogout} variant="contained" color="error" sx={{ borderRadius: 3, fontWeight: 800, textTransform: 'none' }}>ออกจากระบบ</Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 }

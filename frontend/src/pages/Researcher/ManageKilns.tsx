@@ -72,17 +72,66 @@ export default function ManageKilns() {
     };
 
     const confirmParseMapLink = () => {
-        // Regex to extract lat/long from various Google Maps formats
-        const match = mapLink.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-        if (match) {
+        let lat: string | null = null;
+        let lng: string | null = null;
+
+        // 1. Try !3d...!4d... (High precision data param, common in "Copy Link")
+        // Example: ...!3d13.1234567!4d100.1234567...
+        const dataMatch = mapLink.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+        if (dataMatch) {
+            lat = dataMatch[1];
+            lng = dataMatch[2];
+        }
+
+        // 2. Try q=lat,lng (Query param)
+        // Example: ?q=13.123,100.123
+        if (!lat) {
+            const qMatch = mapLink.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+            if (qMatch) {
+                lat = qMatch[1];
+                lng = qMatch[2];
+            }
+        }
+
+        // 3. Try ll=lat,lng (LatLong param)
+        // Example: ?ll=13.123,100.123
+        if (!lat) {
+            const llMatch = mapLink.match(/[?&]ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
+            if (llMatch) {
+                lat = llMatch[1];
+                lng = llMatch[2];
+            }
+        }
+
+        // 4. Try search path
+        // Example: /maps/search/13.123,100.123
+        if (!lat) {
+            const searchMatch = mapLink.match(/\/search\/(-?\d+\.\d+),(-?\d+\.\d+)/);
+            if (searchMatch) {
+                lat = searchMatch[1];
+                lng = searchMatch[2];
+            }
+        }
+
+        // 5. Try viewport @lat,lng (Fallback, least precise but better than nothing)
+        // Example: @13.123,100.123
+        if (!lat) {
+            const viewportMatch = mapLink.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+            if (viewportMatch) {
+                lat = viewportMatch[1];
+                lng = viewportMatch[2];
+            }
+        }
+
+        if (lat && lng) {
             setFormData(prev => ({
                 ...prev,
-                latitude: match[1],
-                longitude: match[2]
+                latitude: lat!,
+                longitude: lng!
             }));
-            alert("ดึงพิกัด Latitude/Longitude จากลิงก์ที่แชร์มาเรียบร้อยแล้ว");
+            alert(`ดึงพิกัดสำเร็จ: ${lat}, ${lng}`);
         } else {
-            alert("ไม่พบพิกัดในลิงก์ที่วาง โปรดตรวจสอบลิงก์อีกครั้ง");
+            alert("ไม่พบพิกัดในลิงก์ที่ระบุ โปรดตรวจสอบว่าเป็นลิงก์ Google Maps ที่ถูกต้อง");
         }
     };
 
@@ -91,8 +140,8 @@ export default function ManageKilns() {
         try {
             const payload = {
                 ...formData,
-                latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
-                longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
+                latitude: formData.latitude ? formData.latitude : undefined,
+                longitude: formData.longitude ? formData.longitude : undefined,
                 is_active: editingKiln ? editingKiln.is_active : 1,
                 sync_status: (editingKiln ? 'pending_update' : 'pending_create') as any
             };
@@ -125,7 +174,7 @@ export default function ManageKilns() {
     };
 
     return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
             <Sidebar />
 
             <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
@@ -136,10 +185,10 @@ export default function ManageKilns() {
                             <Box sx={{ mb: 6 }}>
                                 <Grid container justifyContent="space-between" alignItems="center" spacing={3}>
                                     <Grid size={{ xs: 12, md: 8 }}>
-                                        <Typography variant="h3" sx={{ fontWeight: 950, color: '#0f172a', letterSpacing: -1 }}>
+                                        <Typography variant="h3" sx={{ fontWeight: 950, color: 'primary.main', letterSpacing: -1 }}>
                                             🔥 จัดการเตาเผา
                                         </Typography>
-                                        <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 500, mt: 0.5, opacity: 0.8 }}>
+                                        <Typography variant="h6" color="primary.main" sx={{ fontWeight: 700, mt: 0.5, opacity: 0.8 }}>
                                             ควบคุมดูแลสถานะ และบริหารจัดการเตาเผาถ่านทั้งหมดในโครงการ
                                         </Typography>
                                     </Grid>
@@ -149,9 +198,9 @@ export default function ManageKilns() {
                                             startIcon={<Add />}
                                             onClick={() => setShowModal(true)}
                                             sx={{
-                                                borderRadius: 4, px: 4, py: 2,
-                                                fontWeight: 800, fontSize: '1.1rem',
-                                                boxShadow: '0 8px 16px -4px rgba(59, 130, 246, 0.4)',
+                                                borderRadius: 5, px: 4, py: 2,
+                                                fontWeight: 900, fontSize: '1.1rem',
+                                                boxShadow: '0 8px 24px -6px rgba(62, 39, 35, 0.3)',
                                                 textTransform: 'none'
                                             }}
                                         >
@@ -164,9 +213,9 @@ export default function ManageKilns() {
                             {/* Stat Summary */}
                             <Grid container spacing={3} sx={{ mb: 6 }}>
                                 {[
-                                    { label: 'เตาเผาทั้งหมด', value: stats.total, icon: <Factory />, color: '#6366f1' },
-                                    { label: 'พร้อมใช้งาน (Active)', value: stats.active, icon: <AssignmentTurnedIn />, color: '#10b981' },
-                                    { label: 'ปิดปรับปรุง/ระงับ', value: stats.maintenance, icon: <ReportProblem />, color: '#f43f5e' },
+                                    { label: 'เตาเผาทั้งหมด', value: stats.total, icon: <Factory />, color: 'primary.main' },
+                                    { label: 'พร้อมใช้งาน (Active)', value: stats.active, icon: <AssignmentTurnedIn />, color: 'secondary.main' },
+                                    { label: 'ปิดปรับปรุง/ระงับ', value: stats.maintenance, icon: <ReportProblem />, color: 'error.main' },
                                 ].map((s, idx) => (
                                     <Grid size={{ xs: 12, md: 4 }} key={idx}>
                                         <Paper sx={{
@@ -175,17 +224,19 @@ export default function ManageKilns() {
                                             display: 'flex', alignItems: 'center', gap: 2.5
                                         }}>
                                             <Avatar sx={{
-                                                bgcolor: `${s.color}15`, color: s.color,
-                                                width: 60, height: 60, borderRadius: 4
+                                                bgcolor: 'white', color: s.color,
+                                                width: 60, height: 60, borderRadius: 4,
+                                                border: '1px solid', borderColor: 'divider',
+                                                boxShadow: '0 4px 8px rgba(0,0,0,0.05)'
                                             }}>
                                                 {s.icon}
                                             </Avatar>
                                             <Box>
-                                                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>
+                                                <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 800, textTransform: 'uppercase', opacity: 0.7 }}>
                                                     {s.label}
                                                 </Typography>
-                                                <Typography variant="h4" sx={{ fontWeight: 900, color: '#1e293b' }}>
-                                                    {s.value} <span style={{ fontSize: '1rem', color: '#94a3b8' }}>เตา</span>
+                                                <Typography variant="h4" sx={{ fontWeight: 950, color: 'primary.main' }}>
+                                                    {s.value} <span style={{ fontSize: '1rem', color: 'text.secondary', fontWeight: 700 }}>เตา</span>
                                                 </Typography>
                                             </Box>
                                         </Paper>
@@ -256,10 +307,10 @@ export default function ManageKilns() {
                                                     <Box sx={{ p: 4 }}>
                                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
                                                             <Avatar sx={{
-                                                                bgcolor: k.is_active ? '#eff6ff' : '#fef2f2',
-                                                                color: k.is_active ? 'primary.main' : 'error.main',
+                                                                bgcolor: k.is_active ? 'primary.main' : 'error.main',
+                                                                color: '#fff',
                                                                 width: 56, height: 56, borderRadius: 4,
-                                                                border: '2px solid', borderColor: k.is_active ? '#3b82f610' : '#ef444410'
+                                                                boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
                                                             }}>
                                                                 <LocalFireDepartment />
                                                             </Avatar>
@@ -267,13 +318,13 @@ export default function ManageKilns() {
                                                                 label={k.is_active ? "READY" : "OFFLINE"}
                                                                 sx={{
                                                                     fontWeight: 900, borderRadius: 1.5,
-                                                                    bgcolor: k.is_active ? '#10b981' : '#f43f5e',
+                                                                    bgcolor: k.is_active ? 'secondary.main' : 'error.main',
                                                                     color: '#fff', fontSize: '0.7rem'
                                                                 }}
                                                             />
                                                         </Box>
 
-                                                        <Typography variant="h5" sx={{ fontWeight: 900, mb: 1, color: '#1e293b' }}>
+                                                        <Typography variant="h5" sx={{ fontWeight: 900, mb: 1, color: 'primary.main' }}>
                                                             {k.name}
                                                         </Typography>
 
@@ -297,7 +348,7 @@ export default function ManageKilns() {
                                                                             </IconButton>
                                                                         </Tooltip>
                                                                         <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>
-                                                                            ({k.latitude.toFixed(4)}, {k.longitude.toFixed(4)})
+                                                                            ({k.latitude}, {k.longitude})
                                                                         </Typography>
                                                                     </Box>
                                                                 )}

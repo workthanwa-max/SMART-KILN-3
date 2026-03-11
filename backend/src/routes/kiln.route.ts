@@ -18,8 +18,8 @@ export const kilnRoutes = (app: Elysia) =>
                 body: t.Object({
                     name: t.String(),
                     location: t.Optional(t.String()),
-                    latitude: t.Optional(t.Number()),
-                    longitude: t.Optional(t.Number()),
+                    latitude: t.Optional(t.Nullable(t.String())),
+                    longitude: t.Optional(t.Nullable(t.String())),
                     note: t.Optional(t.String())
                 })
             })
@@ -29,8 +29,8 @@ export const kilnRoutes = (app: Elysia) =>
                 body: t.Object({
                     name: t.String(),
                     location: t.Optional(t.String()),
-                    latitude: t.Optional(t.Number()),
-                    longitude: t.Optional(t.Number()),
+                    latitude: t.Optional(t.Nullable(t.String())),
+                    longitude: t.Optional(t.Nullable(t.String())),
                     note: t.Optional(t.String())
                 })
             })

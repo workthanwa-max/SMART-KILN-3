@@ -16,15 +16,31 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Middleware: จัดการ Error
+// Middleware: จัดการ Response และ Error
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        // [A2] Standardize Response Unwrapping: If it follows our status/data pattern, unwrap it
+        if (response.data && response.data.status === 'success' && response.data.data !== undefined) {
+            return { ...response, data: response.data.data };
+        }
+        return response;
+    },
     (error) => {
         if (error.response?.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('user_role');
-            // window.location.href = '/login'; 
+            window.location.href = '/login';
+        } else if (error.response?.status === 429) {
+            console.error("Rate limit reached. Please try again later.");
+        } else if (!error.response) {
+            console.error("Network Error: Backend may be down.", error);
         }
+
+        // Normalize error message for easier frontend consumption
+        if (error.response?.data?.status === 'error') {
+            error.message = error.response.data.message || error.message;
+        }
+
         return Promise.reject(error);
     }
 );
@@ -68,7 +84,23 @@ export const experimentApi = {
     updateResult: (id: number | string, data: any) => api.patch(`/experiments/${id}/results`, data),
 };
 
+export const woodSpeciesApi = {
+    getAll: (activeOnly = false) => api.get('/wood-species', { params: { active_only: activeOnly } }),
+    create: (name: string) => api.post('/wood-species', { name }),
+    update: (id: number, name: string) => api.put(`/wood-species/${id}`, { name }),
+    toggleActive: (id: number, active: boolean) => api.patch(`/wood-species/${id}/active`, { is_active: active }),
+    delete: (id: number) => api.delete(`/wood-species/${id}`),
+};
+
 export const dashboardApi = {
     getStats: () => api.get('/dashboard/stats'),
     getAnnualReport: (year?: string | number) => api.get('/dashboard/report/annual', { params: { year } }),
+};
+
+export const adminApi = {
+    getStats: () => api.get('/admin/stats'),
+    getLogs: () => api.get('/admin/logs'),
+    getErrors: () => api.get('/admin/errors'),
+    getMetrics: () => api.get('/admin/metrics'),
+    performBackup: () => api.post('/admin/backup'),
 };

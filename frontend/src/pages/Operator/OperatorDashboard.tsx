@@ -9,7 +9,7 @@ import {
     LocalFireDepartment,
     MonitorHeart,
     ArrowForward,
-    Logout,
+    Person,
     KeyboardArrowRight
 } from '@mui/icons-material';
 import { authApi } from '../../api';
@@ -85,13 +85,6 @@ export default function OperatorDashboard() {
         init();
     }, []);
 
-    const handleLogout = () => {
-        if (window.confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
-            localStorage.clear();
-            navigate('/login');
-        }
-    };
-
     const userName = user?.name || localStorage.getItem('user_name') || 'พนักงาน';
 
     const kpiData = [
@@ -112,44 +105,44 @@ export default function OperatorDashboard() {
     ];
 
     if (loading) return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh', justifyContent: 'center', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh', justifyContent: 'center', alignItems: 'center' }}>
             <CircularProgress />
         </Box>
     );
 
     return (
-        <Box sx={{ bgcolor: '#f8fafc', minHeight: '100vh', pb: 4 }}>
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', pb: 4 }}>
             {/* Mobile Header */}
             <Box sx={{
                 bgcolor: 'white',
-                borderBottom: '1px solid #e2e8f0',
-                py: 2,
+                borderBottom: '1px solid #EFEBE9',
+                py: 2.5,
                 px: 2,
                 position: 'sticky',
                 top: 0,
                 zIndex: 10,
-                boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                boxShadow: '0 4px 6px -2px rgba(62, 39, 35, 0.05)'
             }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Stack direction="row" spacing={1.5} alignItems="center">
                         <Avatar sx={{
-                            bgcolor: 'primary.main',
-                            width: 42,
-                            height: 42,
-                            fontSize: '1rem',
-                            fontWeight: 800,
-                            borderRadius: '12px',
-                            boxShadow: '0 4px 10px rgba(37, 99, 235, 0.2)'
+                            bgcolor: 'secondary.main',
+                            width: 50,
+                            height: 50,
+                            fontSize: '1.25rem',
+                            fontWeight: 900,
+                            borderRadius: '16px',
+                            boxShadow: '0 4px 12px rgba(46, 125, 50, 0.2)'
                         }}>
                             {userName.charAt(0).toUpperCase()}
                         </Avatar>
                         <Box>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 900, fontSize: '1rem', lineHeight: 1.2 }}>{userName}</Typography>
-                            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>พนักงานปฏิบัติงาน</Typography>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 900, fontSize: '1.1rem', lineHeight: 1.2, color: 'primary.main' }}>{userName}</Typography>
+                            <Typography variant="caption" color="secondary.main" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>พนักงานปฏิบัติงาน</Typography>
                         </Box>
                     </Stack>
-                    <IconButton size="small" onClick={handleLogout} sx={{ color: 'error.main', bgcolor: '#fef2f2' }}>
-                        <Logout fontSize="small" />
+                    <IconButton size="large" onClick={() => navigate('/profile')} sx={{ color: 'primary.main', bgcolor: '#FBE9E7', borderRadius: 3 }}>
+                        <Person />
                     </IconButton>
                 </Stack>
             </Box>
@@ -194,42 +187,47 @@ export default function OperatorDashboard() {
                         {/* Hero Button */}
                         <Paper sx={{
                             p: 4,
-                            borderRadius: 6,
-                            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                            borderRadius: 7,
+                            background: 'linear-gradient(135deg, #3E2723 0%, #1B0000 100%)', // Charcoal Brown
                             color: 'white',
-                            boxShadow: '0 15px 30px -5px rgba(0, 0, 0, 0.2)',
+                            boxShadow: '0 20px 40px -10px rgba(62, 39, 35, 0.4)',
                             position: 'relative',
                             overflow: 'hidden',
-                            mb: 3,
+                            mb: 4,
                             cursor: 'pointer'
                         }} onClick={() => navigate('/operator/start-burn')}>
                             <Box sx={{ position: 'relative', zIndex: 1 }}>
-                                <Typography variant="h4" sx={{ fontWeight: 900, mb: 1 }}>เริ่มการเผา 🔥</Typography>
-                                <Typography variant="body2" sx={{ opacity: 0.8, mb: 3 }}>
+                                <Typography variant="h2" sx={{ fontWeight: 950, mb: 1, letterSpacing: -1, color: '#fff' }}>เริ่มการเผา 🔥</Typography>
+                                <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.92)', mb: 4, fontWeight: 600 }}>
                                     กดที่นี่เพื่อเริ่มต้นบันทึกการเผาถ่านรอบใหม่
                                 </Typography>
                                 <Button
                                     variant="contained"
-                                    endIcon={<ArrowForward />}
+                                    size="large"
+                                    endIcon={<ArrowForward sx={{ fontSize: 30 }} />}
                                     sx={{
-                                        bgcolor: 'primary.main',
-                                        '&:hover': { bgcolor: 'primary.dark' },
-                                        borderRadius: 3,
-                                        px: 3,
-                                        fontWeight: 800,
-                                        textTransform: 'none'
+                                        bgcolor: 'secondary.main',
+                                        '&:hover': { bgcolor: 'secondary.dark' },
+                                        borderRadius: 4,
+                                        px: 4,
+                                        py: 2,
+                                        fontSize: '1.25rem',
+                                        fontWeight: 900,
+                                        textTransform: 'none',
+                                        boxShadow: '0 8px 20px rgba(46, 125, 50, 0.4)'
                                     }}
                                 >
-                                    เริ่มบันทึก
+                                    เริ่มบันทึกข้อมูล
                                 </Button>
                             </Box>
                             <LocalFireDepartment sx={{
                                 position: 'absolute',
-                                bottom: -30,
-                                right: -20,
-                                fontSize: 180,
-                                opacity: 0.05,
-                                transform: 'rotate(-10deg)'
+                                bottom: -40,
+                                right: -30,
+                                fontSize: 240,
+                                opacity: 0.1,
+                                transform: 'rotate(-10deg)',
+                                color: 'secondary.light'
                             }} />
                         </Paper>
 

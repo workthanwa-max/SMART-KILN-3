@@ -24,7 +24,9 @@ export default function Login() {
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('user_role');
         if (token && role) {
-            if (role === 'researcher') {
+            if (role === 'admin') {
+                navigate('/admin/dashboard');
+            } else if (role === 'researcher') {
                 navigate('/researcher-dashboard');
             } else {
                 navigate('/operator/dashboard');
@@ -65,7 +67,9 @@ export default function Login() {
                 return;
             }
 
-            if (res.data.user.role === 'researcher') {
+            if (res.data.user.role === 'admin') {
+                navigate('/admin/dashboard');
+            } else if (res.data.user.role === 'researcher') {
                 navigate('/researcher-dashboard');
             } else {
                 navigate('/operator/dashboard');
@@ -84,19 +88,19 @@ export default function Login() {
             alignItems: 'center',
             justifyContent: 'center',
             position: 'relative',
-            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+            background: '#FDFBF7', // Neutral Warm Cream
             overflow: 'hidden',
         }}>
-            {/* Dynamic Background Elements */}
+            {/* Organic Background Elements */}
             <Box sx={{
                 position: 'absolute', width: '800px', height: '800px',
-                background: 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(62, 39, 35, 0.05) 0%, transparent 70%)',
                 top: '-200px', left: '-200px', borderRadius: '50%',
                 filter: 'blur(80px)'
             }} />
             <Box sx={{
                 position: 'absolute', width: '600px', height: '600px',
-                background: 'radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(46, 125, 50, 0.04) 0%, transparent 70%)',
                 bottom: '-150px', right: '-150px', borderRadius: '50%',
                 filter: 'blur(60px)'
             }} />
@@ -104,12 +108,12 @@ export default function Login() {
             <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
                 <Grid container sx={{
                     minHeight: { xs: 'auto', md: '650px' },
-                    borderRadius: 10,
+                    borderRadius: 12,
                     overflow: 'hidden',
-                    boxShadow: '0 40px 100px -20px rgba(0,0,0,0.5)',
-                    bgcolor: 'rgba(255,255,255,0.02)',
+                    boxShadow: '0 40px 100px -20px rgba(62, 39, 35, 0.12)',
+                    bgcolor: 'rgba(255,255,255,0.8)',
                     backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255,255,255,0.1)'
+                    border: '1px solid #EFEBE9'
                 }}>
                     {/* Left Side: Branding (Visible on Desktop) */}
                     <Grid size={{ xs: 12, md: 6 }} sx={{
@@ -117,20 +121,20 @@ export default function Login() {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         p: 8,
-                        background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%)',
+                        background: 'linear-gradient(180deg, #3E2723 0%, #1B0000 100%)', // Deep Charcoal
                         borderRight: '1px solid rgba(255,255,255,0.05)'
                     }}>
                         <Fade in timeout={1000}>
                             <Box>
                                 <Box sx={{
                                     width: 80, height: 80,
-                                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                    background: 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)', // Forest Green
                                     color: 'white',
-                                    borderRadius: 4,
+                                    borderRadius: 5,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    boxShadow: '0 20px 40px -10px rgba(37, 99, 235, 0.5)',
+                                    boxShadow: '0 20px 40px -10px rgba(46, 125, 50, 0.4)',
                                     mb: 4
                                 }}>
                                     <LocalFireDepartment sx={{ fontSize: 44 }} />
@@ -140,20 +144,20 @@ export default function Login() {
                                     letterSpacing: -2, lineHeight: 1
                                 }}>
                                     Smart Charcoal <br />
-                                    <Box component="span" sx={{ color: '#60a5fa' }}>Optimization</Box>
+                                    <Box component="span" sx={{ color: '#A5D6A7' }}>Nature-Tech</Box>
                                 </Typography>
-                                <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 500, mb: 4, maxWidth: '400px', lineHeight: 1.6 }}>
-                                    ระบบบริหารจัดการและเพิ่มประสิทธิภาพการผลิตถ่านด้วยเทคโนโลยีบันทึกข้อมูลแบบเรียลไทม์
+                                <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, mb: 4, maxWidth: '400px', lineHeight: 1.6 }}>
+                                    นวัตกรรมการผลิตถ่านคุณภาพสูง ผสมผสานภูมิปัญญาชาวบ้านและเทคโนโลยีการวิจัยที่ยั่งยืน
                                 </Typography>
 
                                 <Stack spacing={2}>
                                     {[
-                                        { icon: <SafetyCheck sx={{ color: '#10b981' }} />, text: 'ระบบยืนยันตัวตนความปลอดภัยสูง' },
-                                        { icon: <VerifiedUser sx={{ color: '#3b82f6' }} />, text: 'บันทึกข้อมูลวิจัยครบถ้วนแม่นยำ' },
+                                        { icon: <SafetyCheck sx={{ color: '#A5D6A7' }} />, text: 'ระบบยืนยันตัวตนที่ใช้งานง่าย' },
+                                        { icon: <VerifiedUser sx={{ color: '#A5D6A7' }} />, text: 'บันทึกข้อมูลและวิเคราะห์ผลลัพธ์แบบแม่นยำ' },
                                     ].map((item, i) => (
                                         <Stack key={i} direction="row" spacing={1.5} alignItems="center">
                                             {item.icon}
-                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>
+                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>
                                                 {item.text}
                                             </Typography>
                                         </Stack>
@@ -175,17 +179,17 @@ export default function Login() {
                             <Box>
                                 {/* Mobile Logo */}
                                 <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 4 }}>
-                                    <Avatar sx={{ bgcolor: 'primary.main', width: 60, height: 60, borderRadius: 2, boxShadow: '0 10px 20px -5px rgba(37, 99, 235, 0.4)' }}>
+                                    <Avatar sx={{ bgcolor: 'primary.main', width: 60, height: 60, borderRadius: 3, boxShadow: '0 10px 20px -5px rgba(62, 39, 35, 0.2)' }}>
                                         <LocalFireDepartment fontSize="large" />
                                     </Avatar>
                                 </Box>
 
                                 <Box sx={{ mb: 6, textAlign: { xs: 'center', md: 'left' } }}>
-                                    <Typography variant="h4" sx={{ fontWeight: 900, color: '#0f172a', mb: 1, letterSpacing: -1 }}>
-                                        ยินดีต้อนรับกลับมา
+                                    <Typography variant="h4" sx={{ fontWeight: 900, color: 'primary.main', mb: 1, letterSpacing: -1 }}>
+                                        ยินดีต้อนรับครับ
                                     </Typography>
-                                    <Typography variant="body1" sx={{ color: '#64748b', fontWeight: 600 }}>
-                                        เข้าสู่ระบบเพื่อจัดการข้อมูลของคุณ
+                                    <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                                        เข้าสู่ระบบบันทึกข้อมูลการผลิตถ่าน
                                     </Typography>
                                 </Box>
 
@@ -198,10 +202,10 @@ export default function Login() {
                                 <Box component="form" onSubmit={handleLogin}>
                                     <Stack spacing={3}>
                                         <Box>
-                                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 800, color: '#334155', ml: 1 }}>เบอร์โทรศัพท์ (UID)</Typography>
+                                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 800, color: 'primary.main', ml: 1 }}>เบอร์โทรศัพท์</Typography>
                                             <TextField
                                                 fullWidth
-                                                placeholder="08XXXXXXXX"
+                                                placeholder="ระบุเบอร์โทรศัพท์ 10 หลัก"
                                                 value={phone}
                                                 onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
                                                 inputProps={{ maxLength: 10, inputMode: 'tel' }}
@@ -209,9 +213,9 @@ export default function Login() {
                                                     startAdornment: <InputAdornment position="start"><PhoneIphone sx={{ color: 'primary.main', opacity: 0.8 }} /></InputAdornment>,
                                                     sx: {
                                                         borderRadius: 4,
-                                                        bgcolor: '#f8fafc',
+                                                        bgcolor: '#FDFBF7',
                                                         fontWeight: 700,
-                                                        '& fieldset': { border: '2px solid #e2e8f0' },
+                                                        '& fieldset': { border: '2px solid #EFEBE9' },
                                                         '&:hover fieldset': { borderColor: 'primary.main' }
                                                     }
                                                 }}
@@ -219,7 +223,7 @@ export default function Login() {
                                         </Box>
 
                                         <Box>
-                                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 800, color: '#334155', ml: 1 }}>รหัสผ่านความปลอดภัย</Typography>
+                                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 800, color: 'primary.main', ml: 1 }}>รหัสผ่าน</Typography>
                                             <TextField
                                                 fullWidth
                                                 type={showPassword ? 'text' : 'password'}
@@ -237,9 +241,9 @@ export default function Login() {
                                                     ),
                                                     sx: {
                                                         borderRadius: 4,
-                                                        bgcolor: '#f8fafc',
+                                                        bgcolor: '#FDFBF7',
                                                         fontWeight: 700,
-                                                        '& fieldset': { border: '2px solid #e2e8f0' },
+                                                        '& fieldset': { border: '2px solid #EFEBE9' },
                                                         '&:hover fieldset': { borderColor: 'primary.main' }
                                                     }
                                                 }}
@@ -256,26 +260,25 @@ export default function Login() {
                                             sx={{
                                                 py: 2.5,
                                                 mt: 2,
-                                                borderRadius: 4,
-                                                fontSize: '1.2rem',
+                                                borderRadius: 5,
+                                                fontSize: '1.25rem',
                                                 fontWeight: 900,
                                                 textTransform: 'none',
-                                                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                                                boxShadow: '0 20px 40px -10px rgba(37, 99, 235, 0.5)',
+                                                bgcolor: 'primary.main',
+                                                boxShadow: '0 20px 40px -10px rgba(62, 39, 35, 0.3)',
                                                 '&:hover': {
-                                                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                                    bgcolor: 'primary.dark',
                                                     transform: 'translateY(-2px)',
-                                                    boxShadow: '0 25px 50px -12px rgba(37, 99, 235, 0.6)'
+                                                    boxShadow: '0 25px 50px -12px rgba(62, 39, 35, 0.4)'
                                                 },
                                                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                '&.Mui-disabled': { bgcolor: '#cbd5e1' }
                                             }}
                                         >
-                                            {loading ? <CircularProgress size={30} color="inherit" /> : 'ลงชื่อเข้าใช้งานระบบ'}
+                                            {loading ? <CircularProgress size={30} color="inherit" /> : 'เข้าสู่ระบบ'}
                                         </Button>
 
-                                        <Typography variant="caption" sx={{ mt: 3, textAlign: 'center', color: '#94a3b8', fontWeight: 600 }}>
-                                            หากมีปัญหาในการเข้าใช้งาน กรุณาติดต่อผู้ดูแลระบบวิจัย <br />
+                                        <Typography variant="caption" sx={{ mt: 3, textAlign: 'center', color: 'text.secondary', fontWeight: 600 }}>
+                                            พบปัญหาการใช้งาน? ติดต่อเจ้าหน้าที่วิจัย <br />
                                             © 2026 Smart Charcoal Optimization
                                         </Typography>
                                     </Stack>

@@ -12,5 +12,5 @@ COPY . .
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application
-CMD ["bun", "run", "src/index.ts"]
+# Start the application with hot-reload for development
+CMD ["bun", "run", "dev"]

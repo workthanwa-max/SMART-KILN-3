@@ -18,7 +18,10 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
 
   // 2. ถ้า Login แล้ว แต่สิทธิ์ (Role) ไม่ถึง ให้เด้งไปหน้า Dashboard ที่ควรจะเป็น
   if (allowedRoles && !allowedRoles.includes(userRole || '')) {
-    const defaultPath = userRole === 'researcher' ? '/researcher-dashboard' : '/operator/dashboard';
+    let defaultPath = '/operator/dashboard';
+    if (userRole === 'admin') defaultPath = '/admin/dashboard';
+    else if (userRole === 'researcher') defaultPath = '/researcher-dashboard';
+
     return <Navigate to={defaultPath} replace />;
   }
 
