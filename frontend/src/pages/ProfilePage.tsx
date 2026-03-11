@@ -5,9 +5,9 @@ import {
     Button, Divider, Chip, Fade, CircularProgress, IconButton
 } from '@mui/material';
 import {
-    Person, Phone, Shield, VpnKey,
+    Person, Phone, VpnKey,
     LocalFireDepartment, Science, ArrowBack,
-    EditOutlined, CalendarToday, VerifiedUser
+    CalendarToday, VerifiedUser
 } from '@mui/icons-material';
 import { authApi } from '../api';
 

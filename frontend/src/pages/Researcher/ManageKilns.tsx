@@ -54,23 +54,6 @@ export default function ManageKilns() {
         return matchesSearch && matchesStatus;
     });
 
-    const handleGetLocation = () => {
-        if (!navigator.geolocation) {
-            alert("เบราว์เซอร์ของคุณไม่รองรับการดึงตำแหน่ง");
-            return;
-        }
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                setFormData(prev => ({
-                    ...prev,
-                    latitude: pos.coords.latitude.toString(),
-                    longitude: pos.coords.longitude.toString()
-                }));
-            },
-            (err) => alert("ไม่สามารถดึงตำแหน่งได้: " + err.message)
-        );
-    };
-
     const confirmParseMapLink = () => {
         let lat: string | null = null;
         let lng: string | null = null;
