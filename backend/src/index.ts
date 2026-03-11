@@ -91,14 +91,17 @@ const app = new Elysia({ strictPath: false })
         iso_time: new Date().toISOString()
     }))
     .get("/ping", () => "pong")
-    .use(authRoutes)
-    .use(userRoutes)
-    .use(kilnRoutes)
-    .use(userKilnRoutes)
-    .use(experimentRoutes)
-    .use(dashboardRoutes)
-    .use(woodSpeciesRoutes)
-    .use(adminRoutes);
+    .group('/api', (api) =>
+        api
+            .use(authRoutes)
+            .use(userRoutes)
+            .use(kilnRoutes)
+            .use(userKilnRoutes)
+            .use(experimentRoutes)
+            .use(dashboardRoutes)
+            .use(woodSpeciesRoutes)
+            .use(adminRoutes)
+    );
 
 // Fix PM2 "async module" error by wrapping top-level await in an async function
 const startServer = async () => {
