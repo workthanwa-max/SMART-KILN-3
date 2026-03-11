@@ -30,7 +30,7 @@ const app = new Elysia({ strictPath: false })
         skip: (request) => request.method === 'OPTIONS' || request.method === 'HEAD' // Skip CORS preflight and HEAD requests
     }))
     .use(cors({
-        origin: [/localhost:5175$/, /localhost:3000$/],
+        origin: [/localhost:5175$/, /localhost:3000$/, /smart-charcoal.next-th.com$/],
         credentials: true,
         allowedHeaders: ['Authorization', 'Content-Type']
     }))
@@ -100,10 +100,19 @@ const app = new Elysia({ strictPath: false })
     .use(woodSpeciesRoutes)
     .use(adminRoutes);
 
-// Run database seeding
-await seedInitialAccounts();
+// Fix PM2 "async module" error by wrapping top-level await in an async function
+const startServer = async () => {
+    try {
+        // Run database seeding
+        await seedInitialAccounts();
 
-app.listen(Number(process.env.PORT) || 3000);
+        app.listen(Number(process.env.PORT) || 3009);
 
-console.log(`🚀 Server running at ${app.server?.hostname}:${app.server?.port}`);
-Logger.log('INFO', `Server started on port ${process.env.PORT || 3000}`);
+        console.log(`🚀 Server running at ${app.server?.hostname}:${app.server?.port}`);
+        Logger.log('INFO', `Server started on port ${process.env.PORT || 3009}`);
+    } catch (error) {
+        console.error("❌ Failed to start server:", error);
+    }
+};
+
+startServer();
