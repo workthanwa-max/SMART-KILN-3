@@ -4,7 +4,7 @@ import db from '../db';
  * Seed initial accounts for deployment.
  * This script should be run manually during deployment or when setting up a new environment.
  */
-const seedInitialAccounts = async () => {
+export const seedInitialAccounts = async () => {
     console.log("🌱 Starting safe database seeding...");
 
     // Check if admin already exists to avoid duplicate seeding
@@ -12,7 +12,7 @@ const seedInitialAccounts = async () => {
 
     if (adminExists.count > 0) {
         console.log("⚠️ Database already contains admin accounts. Skipping seed to prevent overwriting.");
-        process.exit(0);
+        return;
     }
 
     try {
@@ -45,8 +45,5 @@ const seedInitialAccounts = async () => {
 
     } catch (error) {
         console.error("❌ Seeding failed:", error);
-        process.exit(1);
     }
 };
-
-seedInitialAccounts();

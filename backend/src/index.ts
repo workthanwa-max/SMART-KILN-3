@@ -16,6 +16,7 @@ import { adminRoutes } from './routes/admin.route';
 import { helmet } from 'elysia-helmet';
 import { rateLimit } from 'elysia-rate-limit';
 import { Logger } from './utils/logger';
+import { seedInitialAccounts } from './db/seed';
 
 if (!process.env.JWT_SECRET) {
     throw new Error('❌ JWT_SECRET is not set in environment variables!');
@@ -97,8 +98,12 @@ const app = new Elysia({ strictPath: false })
     .use(experimentRoutes)
     .use(dashboardRoutes)
     .use(woodSpeciesRoutes)
-    .use(adminRoutes)
-    .listen(Number(process.env.PORT) || 3000);
+    .use(adminRoutes);
+
+// Run database seeding
+await seedInitialAccounts();
+
+app.listen(Number(process.env.PORT) || 3000);
 
 console.log(`🚀 Server running at ${app.server?.hostname}:${app.server?.port}`);
 Logger.log('INFO', `Server started on port ${process.env.PORT || 3000}`);
