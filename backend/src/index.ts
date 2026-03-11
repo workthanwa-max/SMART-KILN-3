@@ -30,7 +30,7 @@ const app = new Elysia({ strictPath: false })
         skip: (request) => request.method === 'OPTIONS' || request.method === 'HEAD' // Skip CORS preflight and HEAD requests
     }))
     .use(cors({
-        origin: [/localhost:5173$/, /localhost:3000$/],
+        origin: [/localhost:5175$/, /localhost:3000$/],
         credentials: true,
         allowedHeaders: ['Authorization', 'Content-Type']
     }))
