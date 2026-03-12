@@ -24,11 +24,11 @@ export const experimentRoutes = (app: Elysia) =>
         })
 
         // 3. Dynamic Routes (ID based)
-        .get('/experiments/:id', ExperimentController.getDetail, {
+        .get('/experiments/:id([0-9]+)', ExperimentController.getDetail, {
             params: t.Object({ id: t.Numeric() })
         })
 
-        .post('/experiments/:id/materials', ExperimentController.addMaterial, {
+        .post('/experiments/:id([0-9]+)/materials', ExperimentController.addMaterial, {
             params: t.Object({ id: t.Numeric() }),
             body: t.Object({
                 wood_type: t.String(),
@@ -37,7 +37,7 @@ export const experimentRoutes = (app: Elysia) =>
             })
         })
 
-        .patch('/experiments/:id/results', ExperimentController.updateResult, {
+        .patch('/experiments/:id([0-9]+)/results', ExperimentController.updateResult, {
             params: t.Object({ id: t.Numeric() }),
             body: t.Object({
                 charcoal_weight: t.Number(),
