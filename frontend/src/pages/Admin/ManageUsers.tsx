@@ -172,7 +172,7 @@ export default function AdminManageUsers() {
                                 { label: 'บัญชีทั้งหมด', value: stats.total, icon: <Group />, color: '#3E2723' },
                                 { label: 'แอดมิน (Admin)', value: stats.admins, icon: <Shield />, color: '#e11d48' },
                                 { label: 'นักวิจัย (Researcher)', value: stats.researchers, icon: <Science />, color: '#3b82f6' },
-                                { label: 'พนักงาน (Operator)', value: stats.operators, icon: <Engineering />, color: '#10b981' },
+                                { label: 'นวัตกร (Operator)', value: stats.operators, icon: <Engineering />, color: '#10b981' },
                             ].map((s, idx) => (
                                 <Grid size={{ xs: 12, sm: 6, md: 3 }} key={idx}>
                                     <Paper sx={{ p: 3, borderRadius: 5, display: 'flex', alignItems: 'center', gap: 2.5 }}>

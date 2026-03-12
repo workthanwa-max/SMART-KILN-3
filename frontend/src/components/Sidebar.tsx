@@ -111,7 +111,7 @@ export default function Sidebar() {
                                     {userName}
                                 </Typography>
                                 <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', fontSize: '0.65rem', letterSpacing: 0.5 }}>
-                                    {userRole}
+                                    {userRole === 'operator' ? 'นวัตกร' : userRole === 'researcher' ? 'นักวิจัย' : userRole}
                                 </Typography>
                             </Box>
                         </Stack>

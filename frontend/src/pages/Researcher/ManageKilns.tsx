@@ -16,7 +16,9 @@ import {
     AssignmentTurnedIn,
     ReportProblem,
     Factory,
-    Science
+    Science,
+    CloudUpload,
+    Delete
 } from '@mui/icons-material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../db/db';
@@ -30,7 +32,7 @@ export default function ManageKilns() {
     const [loading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [editingKiln, setEditingKiln] = useState<any>(null);
-    const [formData, setFormData] = useState({ name: '', location: '', note: '', latitude: '', longitude: '' });
+    const [formData, setFormData] = useState({ name: '', location: '', note: '', latitude: '', longitude: '', image: '' });
     const [search, setSearch] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
     const [mapLink, setMapLink] = useState('');
@@ -118,6 +120,21 @@ export default function ManageKilns() {
         }
     };
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) {
+                alert("ไฟล์รูปภาพมีขนาดใหญ่เกินไป (จำกัด 2MB)");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({ ...prev, image: reader.result as string }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -152,7 +169,7 @@ export default function ManageKilns() {
     const closeModal = () => {
         setShowModal(false);
         setEditingKiln(null);
-        setFormData({ name: '', location: '', note: '', latitude: '', longitude: '' });
+        setFormData({ name: '', location: '', note: '', latitude: '', longitude: '', image: '' });
         setMapLink('');
     };
 
@@ -279,35 +296,73 @@ export default function ManageKilns() {
                                         filteredKilns.map((k) => (
                                             <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={k.kiln_id}>
                                                 <Paper sx={{
-                                                    p: 0, borderRadius: 6, overflow: 'hidden',
-                                                    border: '1px solid #e2e8f0', transition: 'all 0.3s ease',
+                                                    p: 0,
+                                                    borderRadius: '28px',
+                                                    overflow: 'hidden',
+                                                    border: '1px solid rgba(0,0,0,0.06)',
+                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    bgcolor: 'white',
                                                     '&:hover': {
-                                                        transform: 'translateY(-8px)',
-                                                        boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
-                                                        borderColor: k.is_active ? 'primary.main' : 'error.main'
+                                                        transform: 'translateY(-12px)',
+                                                        boxShadow: '0 30px 60px -12px rgba(62, 39, 35, 0.15)',
+                                                        borderColor: k.is_active ? 'secondary.main' : 'error.light',
+                                                        '& .kiln-image-header': { transform: 'scale(1.05)' }
                                                     }
                                                 }}>
-                                                    <Box sx={{ p: 4 }}>
-                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-                                                            <Avatar sx={{
-                                                                bgcolor: k.is_active ? 'primary.main' : 'error.main',
-                                                                color: '#fff',
-                                                                width: 56, height: 56, borderRadius: 4,
-                                                                boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
-                                                            }}>
-                                                                <LocalFireDepartment />
-                                                            </Avatar>
+                                                    <Box sx={{
+                                                        height: 200,
+                                                        position: 'relative',
+                                                        overflow: 'hidden'
+                                                    }}>
+                                                        <Box
+                                                            className="kiln-image-header"
+                                                            sx={{
+                                                                position: 'absolute', inset: 0,
+                                                                background: k.image ? `url(${k.image}) center/cover no-repeat` : `linear-gradient(135deg, ${k.is_active ? '#3E2723' : '#dc2626'} 0%, #1B0000 100%)`,
+                                                                transition: 'transform 0.6s ease'
+                                                            }}
+                                                        />
+                                                        {!k.image && (
+                                                            <LocalFireDepartment sx={{
+                                                                position: 'absolute', top: '50%', left: '50%',
+                                                                transform: 'translate(-50%, -50%)',
+                                                                fontSize: 100, color: 'white', opacity: 0.08
+                                                            }} />
+                                                        )}
+                                                        <Box sx={{
+                                                            position: 'absolute', top: 20, right: 20,
+                                                            display: 'flex', gap: 1
+                                                        }}>
                                                             <Chip
                                                                 label={k.is_active ? "READY" : "OFFLINE"}
                                                                 sx={{
-                                                                    fontWeight: 900, borderRadius: 1.5,
+                                                                    fontWeight: 900, borderRadius: '12px',
                                                                     bgcolor: k.is_active ? 'secondary.main' : 'error.main',
-                                                                    color: '#fff', fontSize: '0.7rem'
+                                                                    color: '#fff', fontSize: '0.75rem',
+                                                                    px: 1, height: 26,
+                                                                    boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+                                                                    border: '1px solid rgba(255,255,255,0.2)'
                                                                 }}
                                                             />
                                                         </Box>
+                                                        {/* Floating ID Tag */}
+                                                        <Box sx={{
+                                                            position: 'absolute', bottom: 0, left: 24,
+                                                            bgcolor: 'white', px: 2, py: 0.8,
+                                                            borderTopLeftRadius: '12px', borderTopRightRadius: '12px',
+                                                            boxShadow: '0 -4px 12px rgba(0,0,0,0.05)'
+                                                        }}>
+                                                            <Typography variant="caption" sx={{ fontWeight: 900, color: 'primary.main', letterSpacing: 1 }}>
+                                                                ID: {String(k.kiln_id).padStart(3, '0')}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
 
-                                                        <Typography variant="h5" sx={{ fontWeight: 900, mb: 1, color: 'primary.main' }}>
+                                                    <Box sx={{ p: 4, pt: 3 }}>
+                                                        <Typography variant="h5" sx={{
+                                                            fontWeight: 900, mb: 1.5, color: '#1a202c',
+                                                            fontSize: '1.4rem', letterSpacing: -0.5
+                                                        }}>
                                                             {k.name}
                                                         </Typography>
 
@@ -361,7 +416,8 @@ export default function ManageKilns() {
                                                                         location: k.location,
                                                                         note: k.note,
                                                                         latitude: k.latitude?.toString() || '',
-                                                                        longitude: k.longitude?.toString() || ''
+                                                                        longitude: k.longitude?.toString() || '',
+                                                                        image: k.image || ''
                                                                     });
                                                                     setShowModal(true);
                                                                 }}
@@ -462,6 +518,61 @@ export default function ManageKilns() {
                                     />
                                 </Grid>
                             </Grid>
+
+                            <Box>
+                                <Typography variant="body2" sx={{ mb: 1.5, fontWeight: 800, color: 'primary.main' }}>รูปภาพเตาเผา</Typography>
+                                <Paper variant="outlined" sx={{
+                                    p: 2, borderRadius: 4, textAlign: 'center',
+                                    borderStyle: 'dashed', borderWeight: 2,
+                                    borderColor: 'divider',
+                                    bgcolor: '#f8fafc'
+                                }}>
+                                    {formData.image ? (
+                                        <Box sx={{ position: 'relative', width: '100%', height: 180, mb: 1 }}>
+                                            <img
+                                                src={formData.image}
+                                                alt="Kiln"
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+                                            />
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                                                sx={{
+                                                    position: 'absolute', top: 8, right: 8,
+                                                    bgcolor: 'rgba(255,255,255,0.8)',
+                                                    '&:hover': { bgcolor: 'error.main', color: 'white' }
+                                                }}
+                                            >
+                                                <Delete fontSize="small" />
+                                            </IconButton>
+                                        </Box>
+                                    ) : (
+                                        <Box sx={{ py: 3 }}>
+                                            <CloudUpload sx={{ fontSize: 40, color: 'text.disabled', mb: 1 }} />
+                                            <Typography variant="caption" display="block" color="text.secondary" sx={{ fontWeight: 600 }}>
+                                                อัปโหลดรูปภาพเตา (สูงสุด 2MB)
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        id="kiln-image-upload"
+                                        onChange={handleImageChange}
+                                    />
+                                    <label htmlFor="kiln-image-upload">
+                                        <Button
+                                            variant="outlined"
+                                            component="span"
+                                            size="small"
+                                            sx={{ borderRadius: 3, fontWeight: 800, textTransform: 'none' }}
+                                        >
+                                            {formData.image ? 'เปลี่ยนรูปภาพ' : 'เลือกรูปภาพ'}
+                                        </Button>
+                                    </label>
+                                </Paper>
+                            </Box>
 
                             <TextField
                                 label="รายละเอียด / ข้อมูลทางเทคนิค"

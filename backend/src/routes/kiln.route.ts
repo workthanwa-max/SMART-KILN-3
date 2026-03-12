@@ -6,7 +6,7 @@ export const kilnRoutes = (app: Elysia) =>
     app.group('/kilns', (group) =>
         group
             // เช็คสิทธิ์พื้นฐาน (ต้อง Login ก่อน)
-            .onBeforeHandle(({ user, set }) => {
+            .onBeforeHandle(({ user, set }: any) => {
                 if (!user) {
                     set.status = 401;
                     return { error: 'Unauthorized' };
@@ -20,7 +20,8 @@ export const kilnRoutes = (app: Elysia) =>
                     location: t.Optional(t.String()),
                     latitude: t.Optional(t.Nullable(t.String())),
                     longitude: t.Optional(t.Nullable(t.String())),
-                    note: t.Optional(t.String())
+                    note: t.Optional(t.String()),
+                    image: t.Optional(t.String())
                 })
             })
 
@@ -31,7 +32,8 @@ export const kilnRoutes = (app: Elysia) =>
                     location: t.Optional(t.String()),
                     latitude: t.Optional(t.Nullable(t.String())),
                     longitude: t.Optional(t.Nullable(t.String())),
-                    note: t.Optional(t.String())
+                    note: t.Optional(t.String()),
+                    image: t.Optional(t.String())
                 })
             })
 

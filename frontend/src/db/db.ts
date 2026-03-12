@@ -17,6 +17,7 @@ export interface Kiln {
     latitude?: string;
     longitude?: string;
     note: string;
+    image?: string;
     is_active: number;
     sync_status?: 'synced' | 'pending_create' | 'pending_update';
 }

@@ -43,7 +43,9 @@ export const DashboardController = {
 
             const recentExperiments = recent.map(e => ({
                 ...e,
-                yield_percent: e.charcoal_weight && e.total_wood_weight ? (e.charcoal_weight / e.total_wood_weight) * 100 : 0
+                yield_percent: e.charcoal_weight && e.total_wood_weight && e.total_wood_weight > 0
+                    ? (e.charcoal_weight / e.total_wood_weight) * 100
+                    : 0
             }));
 
             return {

@@ -148,7 +148,7 @@ export default function ExperimentList() {
                                         <Grid size={{ xs: 12, md: 4 }}>
                                             <TextField
                                                 fullWidth size="small"
-                                                placeholder="ค้นหาตามชื่อเตา, พนักงาน, บันทึก..."
+                                                placeholder="ค้นหาตามชื่อเตา, นวัตกร, บันทึก..."
                                                 value={search}
                                                 onChange={e => setSearch(e.target.value)}
                                                 InputProps={{
@@ -299,7 +299,7 @@ export default function ExperimentList() {
                                                                     </Grid>
                                                                     <Divider orientation="vertical" flexItem sx={{ my: 1 }} />
                                                                     <Grid size={{ xs: 4 }} sx={{ pl: 1 }}>
-                                                                        <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 900, textTransform: 'uppercase', display: 'block', mb: 0.5, opacity: 0.6 }}>พนักงาน</Typography>
+                                                                        <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 900, textTransform: 'uppercase', display: 'block', mb: 0.5, opacity: 0.6 }}>นวัตกร</Typography>
                                                                         <Typography variant="body2" noWrap sx={{ fontWeight: 800, color: 'primary.main' }}>
                                                                             {exp.operator_name.split(' ')[0]}
                                                                         </Typography>
@@ -359,7 +359,7 @@ export default function ExperimentList() {
                                             <TableRow>
                                                 <TableCell sx={{ fontWeight: 900 }}>วันที่</TableCell>
                                                 <TableCell sx={{ fontWeight: 900 }}>ชื่อเตา</TableCell>
-                                                <TableCell sx={{ fontWeight: 900 }}>พนักงาน</TableCell>
+                                                <TableCell sx={{ fontWeight: 900 }}>นวัตกร</TableCell>
                                                 <TableCell sx={{ fontWeight: 900 }}>น้ำหนัก (กก.)</TableCell>
                                                 <TableCell sx={{ fontWeight: 900 }}>Yield (%)</TableCell>
                                                 <TableCell sx={{ fontWeight: 900 }}>เกรดคุณภาพ</TableCell>

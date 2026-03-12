@@ -28,6 +28,7 @@ const initDb = () => {
             latitude TEXT,
             longitude TEXT,
             note TEXT,
+            image TEXT,
             is_active INTEGER DEFAULT 1
         );
     `);
@@ -154,6 +155,9 @@ const initDb = () => {
     } catch (e) { }
     try {
         db.run("ALTER TABLE kilns ADD COLUMN longitude REAL;");
+    } catch (e) { }
+    try {
+        db.run("ALTER TABLE kilns ADD COLUMN image TEXT;");
     } catch (e) { }
 
     // Migration: Remove quality_grade CHECK constraint by recreating the table

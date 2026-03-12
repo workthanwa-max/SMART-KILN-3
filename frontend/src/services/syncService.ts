@@ -79,6 +79,18 @@ class SyncService {
                 await db.user_kilns.bulkPut(userKilnsRes.data.map((uk: any) => ({ ...uk, sync_status: 'synced' })));
             }
 
+            // Pull Experiment Materials
+            // We need to add this endpoint to the backend first
+            try {
+                const materialsRes = await api.get('/experiments/materials');
+                if (Array.isArray(materialsRes.data)) {
+                    await this.pruneLocalData('experiment_materials', materialsRes.data, 'id');
+                    await db.experiment_materials.bulkPut(materialsRes.data.map((m: any) => ({ ...m, sync_status: 'synced' })));
+                }
+            } catch (e) {
+                console.warn('Backend may not support global experiment-materials endpoint yet');
+            }
+
             console.log('Successfully pulled and validated data from server');
         } catch (error) {
             console.error('Failed to pull data from server', error);
@@ -138,9 +150,7 @@ class SyncService {
                             console.log(`Kiln ${kiln.kiln_id} not found on server. Deleting local copy.`);
                             await db.kilns.delete(kiln.kiln_id!);
                         }
-                        else if (err.response.status >= 400 && err.response.status < 500) {
-                            await db.kilns.update(kiln.kiln_id!, { sync_status: 'synced' });
-                        }
+                        // Don't mark as synced on 400 - might be a transient dependency issue
                     }
                 }
             }
@@ -166,10 +176,21 @@ class SyncService {
                             console.log(`Experiment ${exp.experiment_id} not found on server. Deleting local copy.`);
                             await db.experiments.delete(exp.experiment_id!);
                         }
-                        else if (err.response.status >= 400 && err.response.status < 500) {
-                            await db.experiments.update(exp.experiment_id!, { sync_status: 'synced' });
-                        }
                     }
+                }
+            }
+
+            // Sync Experiment Materials
+            const pendingMaterials = await db.experiment_materials.where('sync_status').notEqual('synced').toArray();
+            for (const mat of pendingMaterials) {
+                try {
+                    if (mat.sync_status === 'pending_create') {
+                        // backend endpoint prefix is /experiments/:id/materials
+                        await api.post(`/experiments/${mat.experiment_id}/materials`, mat);
+                        await db.experiment_materials.update(mat.id!, { sync_status: 'synced' });
+                    }
+                } catch (err: any) {
+                    console.error(`Failed to sync material ${mat.id}:`, err);
                 }
             }
 
@@ -186,9 +207,6 @@ class SyncService {
                     }
                 } catch (err: any) {
                     console.error(`Failed to sync user_kiln ${uk.id}:`, err);
-                    if (err.response && (err.response.status >= 400 && err.response.status < 500)) {
-                        await db.user_kilns.update(uk.id!, { sync_status: 'synced' });
-                    }
                 }
             }
 

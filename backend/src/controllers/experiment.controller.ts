@@ -35,6 +35,18 @@ export const ExperimentController = {
         }));
     },
 
+    getAllMaterials: ({ user }: any) => {
+        if (user.role === 'researcher') {
+            return db.query("SELECT * FROM experiment_materials").all();
+        } else {
+            return db.query(`
+                SELECT em.* FROM experiment_materials em
+                JOIN experiments e ON em.experiment_id = e.experiment_id
+                WHERE e.operator_id = ?
+            `).all(user.id);
+        }
+    },
+
     // 2. สร้างการทดลองใหม่
     create: ({ body, user, set }: any) => {
         try {
@@ -91,30 +103,30 @@ export const ExperimentController = {
         let result;
         if (user.role === 'researcher') {
             result = db.prepare(`
-                        UPDATE experiments SET
-                            charcoal_weight = ?,
-                            bag_count = ?,
-                            quality_grade = ?,
-                            final_moisture = ?,
-                            summary_note = ?,
-                            burn_hours = ?,
-                            wood_vinegar_quantity = ?,
-                            temperature = ?
-                        WHERE experiment_id = ?
-                    `).run(charcoal_weight, bag_count, quality_grade, final_moisture || null, summary_note, burn_hours, wood_vinegar_quantity || null, temperature || null, params.id);
+                UPDATE experiments SET
+                    charcoal_weight = ?,
+                    bag_count = ?,
+                    quality_grade = ?,
+                    final_moisture = ?,
+                    summary_note = ?,
+                    burn_hours = ?,
+                    wood_vinegar_quantity = ?,
+                    temperature = ?
+                WHERE experiment_id = ?
+            `).run(charcoal_weight, bag_count, quality_grade, final_moisture || null, summary_note, burn_hours, wood_vinegar_quantity || null, temperature || null, params.id);
         } else {
             result = db.prepare(`
-                        UPDATE experiments SET
-                            charcoal_weight = ?,
-                            bag_count = ?,
-                            quality_grade = ?,
-                            final_moisture = ?,
-                            summary_note = ?,
-                            burn_hours = ?,
-                            wood_vinegar_quantity = ?,
-                            temperature = ?
-                        WHERE experiment_id = ? AND operator_id = ?
-                    `).run(charcoal_weight, bag_count, quality_grade, final_moisture || null, summary_note, burn_hours, wood_vinegar_quantity || null, temperature || null, params.id, user.id);
+                UPDATE experiments SET
+                    charcoal_weight = ?,
+                    bag_count = ?,
+                    quality_grade = ?,
+                    final_moisture = ?,
+                    summary_note = ?,
+                    burn_hours = ?,
+                    wood_vinegar_quantity = ?,
+                    temperature = ?
+                WHERE experiment_id = ? AND operator_id = ?
+            `).run(charcoal_weight, bag_count, quality_grade, final_moisture || null, summary_note, burn_hours, wood_vinegar_quantity || null, temperature || null, params.id, user.id);
         }
         if (result.changes === 0) {
             set.status = 404;

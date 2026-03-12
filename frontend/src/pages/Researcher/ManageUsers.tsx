@@ -192,7 +192,7 @@ export default function ManageUsers() {
                                 {[
                                     { label: 'สมาชิกทั้งหมด', value: stats.total, icon: <Group />, color: '#6366f1' },
                                     { label: 'นักวิจัย (Researcher)', value: stats.researchers, icon: <Science />, color: '#3b82f6' },
-                                    { label: 'ผู้ปฏิบัติงาน (Operator)', value: stats.operators, icon: <Engineering />, color: '#10b981' },
+                                    { label: 'นวัตกร (Operator)', value: stats.operators, icon: <Engineering />, color: '#10b981' },
                                     { label: 'เปิดใช้งานอยู่', value: stats.active, icon: <VerifiedUser />, color: '#f59e0b' },
                                 ].map((s, idx) => (
                                     <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={idx}>
@@ -465,7 +465,7 @@ export default function ManageUsers() {
                                 <MenuItem value="operator">
                                     <Stack direction="row" alignItems="center" spacing={1.5} sx={{ py: 0.5 }}>
                                         <Engineering sx={{ color: '#059669' }} />
-                                        <Typography sx={{ fontWeight: 700 }}>ผู้ปฏิบัติงาน (Operator)</Typography>
+                                        <Typography sx={{ fontWeight: 700 }}>นวัตกร (Operator)</Typography>
                                     </Stack>
                                 </MenuItem>
                                 <MenuItem value="researcher">

@@ -14,6 +14,9 @@ export const experimentRoutes = (app: Elysia) =>
             // ดึงรายการทั้งหมด
             .get('/', ExperimentController.getAll)
 
+            // ดึงวัสดุทั้งหมด (สำหรับ sync)
+            .get('/materials', ExperimentController.getAllMaterials)
+
             // สร้างการทดลองใหม่
             .post('/', ExperimentController.create, {
                 body: t.Object({

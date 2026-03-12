@@ -48,7 +48,7 @@ export default function ResearcherDashboard() {
     const kpiData = [
         { label: 'เตาที่ใช้งานได้', value: overview.active_kilns || 0, icon: <LocalFireDepartment />, color: '#3b82f6', bg: '#eff6ff' },
         { label: 'กำลังเผาอยู่ (Live)', value: overview.in_use_kilns || 0, icon: <QueryStats />, color: '#f59e0b', bg: '#fffbeb' },
-        { label: 'พนักงานทั้งหมด', value: overview.operator_count || 0, icon: <Group />, color: '#10b981', bg: '#ecfdf5' },
+        { label: 'นวัตกรทั้งหมด', value: overview.operator_count || 0, icon: <Group />, color: '#10b981', bg: '#ecfdf5' },
         { label: 'การเผาทั้งหมด', value: overview.total_experiments || 0, icon: <Science />, color: '#8b5cf6', bg: '#f5f3ff' },
     ];
 

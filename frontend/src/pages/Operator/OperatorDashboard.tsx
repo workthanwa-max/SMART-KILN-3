@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Box, Container, Typography, Grid, Paper, Stack,
-    Button, CircularProgress, Fade, Avatar, IconButton, Chip
+    Button, CircularProgress, Fade, Avatar, IconButton, Chip,
+    Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import {
     History,
     LocalFireDepartment,
     MonitorHeart,
     ArrowForward,
-    Person,
-    KeyboardArrowRight
+    KeyboardArrowRight,
+    Logout,
+    WarningAmber,
+    Place
 } from '@mui/icons-material';
 import { authApi } from '../../api';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -21,6 +24,7 @@ export default function OperatorDashboard() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
+    const [logoutOpen, setLogoutOpen] = useState(false);
 
     const userId = Number(localStorage.getItem('user_id'));
 
@@ -65,6 +69,11 @@ export default function OperatorDashboard() {
         return { runs, hours, weight };
     }, [userId]);
 
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/login');
+    };
+
     useEffect(() => {
         const init = async () => {
             if (await syncService.isOnline()) {
@@ -74,10 +83,9 @@ export default function OperatorDashboard() {
             try {
                 const userRes = await authApi.getMe();
                 setUser(userRes.data);
-                // Ensure ID is saved if missing (e.g. slight race condition)
                 if (userRes.data.id) localStorage.setItem('user_id', String(userRes.data.id));
             } catch (e) {
-                const savedName = localStorage.getItem('user_name') || 'พนักงาน';
+                const savedName = localStorage.getItem('user_name') || 'นวัตกร';
                 setUser({ name: savedName });
             }
             setLoading(false);
@@ -85,7 +93,7 @@ export default function OperatorDashboard() {
         init();
     }, []);
 
-    const userName = user?.name || localStorage.getItem('user_name') || 'พนักงาน';
+    const userName = user?.name || localStorage.getItem('user_name') || 'นวัตกร';
 
     const kpiData = [
         {
@@ -124,7 +132,21 @@ export default function OperatorDashboard() {
                 boxShadow: '0 4px 6px -2px rgba(62, 39, 35, 0.05)'
             }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Stack direction="row" spacing={1.5} alignItems="center">
+                    <Stack
+                        direction="row"
+                        spacing={1.5}
+                        alignItems="center"
+                        onClick={() => navigate('/profile')}
+                        sx={{
+                            cursor: 'pointer',
+                            p: 0.5,
+                            pr: 2,
+                            borderRadius: '20px',
+                            transition: 'all 0.2s',
+                            '&:hover': { bgcolor: 'rgba(0,0,0,0.03)' },
+                            '&:active': { transform: 'scale(0.98)' }
+                        }}
+                    >
                         <Avatar sx={{
                             bgcolor: 'secondary.main',
                             width: 50,
@@ -138,12 +160,14 @@ export default function OperatorDashboard() {
                         </Avatar>
                         <Box>
                             <Typography variant="subtitle1" sx={{ fontWeight: 900, fontSize: '1.1rem', lineHeight: 1.2, color: 'primary.main' }}>{userName}</Typography>
-                            <Typography variant="caption" color="secondary.main" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>พนักงานปฏิบัติงาน</Typography>
+                            <Typography variant="caption" color="secondary.main" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>นวัตกร</Typography>
                         </Box>
                     </Stack>
-                    <IconButton size="large" onClick={() => navigate('/profile')} sx={{ color: 'primary.main', bgcolor: '#FBE9E7', borderRadius: 3 }}>
-                        <Person />
-                    </IconButton>
+                    <Stack direction="row" spacing={1}>
+                        <IconButton size="large" onClick={() => setLogoutOpen(true)} sx={{ color: 'error.main', bgcolor: '#FFF5F5', borderRadius: 3 }}>
+                            <Logout />
+                        </IconButton>
+                    </Stack>
                 </Stack>
             </Box>
 
@@ -231,6 +255,97 @@ export default function OperatorDashboard() {
                             }} />
                         </Paper>
 
+                        {/* Assigned Kilns */}
+                        {myKilns.length > 0 && (
+                            <Box sx={{ mb: 4 }}>
+                                <Typography variant="h6" sx={{ fontWeight: 950, mb: 2, px: 0.5 }}>เตาที่คุณรับผิดชอบ</Typography>
+                                <Box sx={{
+                                    display: 'flex',
+                                    gap: 2,
+                                    overflowX: 'auto',
+                                    pb: 2,
+                                    px: 0.5,
+                                    '&::-webkit-scrollbar': { display: 'none' }
+                                }}>
+                                    {myKilns.map((k) => (
+                                        <Paper key={k.kiln_id} sx={{
+                                            minWidth: 190,
+                                            maxWidth: 190,
+                                            height: 240,
+                                            borderRadius: '24px',
+                                            overflow: 'hidden',
+                                            position: 'relative',
+                                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                                            background: k.image ? `url(${k.image}) center/cover no-repeat` : 'linear-gradient(135deg, #3E2723 0%, #1B0000 100%)',
+                                            flexShrink: 0,
+                                            boxShadow: '0 12px 24px -10px rgba(0,0,0,0.3)',
+                                            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                                            '&:hover': {
+                                                transform: 'translateY(-10px) scale(1.02)',
+                                                boxShadow: '0 20px 30px -10px rgba(0,0,0,0.4)',
+                                                '& .kiln-overlay': { bgcolor: 'rgba(0,0,0,0.4)' },
+                                                '& .kiln-info': { transform: 'translateY(0)' }
+                                            }
+                                        }}>
+                                            {/* Gradient & Glass Overlay */}
+                                            <Box className="kiln-overlay" sx={{
+                                                position: 'absolute',
+                                                inset: 0,
+                                                background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 100%)',
+                                                transition: 'all 0.3s ease',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                justifyContent: 'flex-end',
+                                                p: 2.5
+                                            }}>
+                                                <Box className="kiln-info" sx={{
+                                                    transform: 'translateY(10px)',
+                                                    transition: 'all 0.4s ease'
+                                                }}>
+                                                    <Typography variant="subtitle1" sx={{
+                                                        fontWeight: 900,
+                                                        color: 'white',
+                                                        mb: 0.5,
+                                                        lineHeight: 1.2,
+                                                        fontSize: '1.1rem',
+                                                        letterSpacing: -0.5,
+                                                        textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                                                    }}>
+                                                        {k.name}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{
+                                                        color: 'rgba(255,255,255,0.8)',
+                                                        fontWeight: 700,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 0.5,
+                                                        fontSize: '0.75rem'
+                                                    }}>
+                                                        <Place sx={{ fontSize: 14, color: 'secondary.light' }} />
+                                                        {k.location || 'ไม่ระบุพิกัด'}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            {/* Status Badge */}
+                                            <Box sx={{
+                                                position: 'absolute', top: 12, right: 12,
+                                                backdropFilter: 'blur(8px)',
+                                                bgcolor: 'rgba(255, 255, 255, 0.15)',
+                                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                                borderRadius: '12px',
+                                                px: 1.2, py: 0.4,
+                                                display: 'flex', alignItems: 'center', gap: 0.5
+                                            }}>
+                                                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: 'secondary.main', boxShadow: '0 0 8px #85A98F' }} />
+                                                <Typography sx={{ color: 'white', fontSize: '0.65rem', fontWeight: 900, letterSpacing: 0.5 }}>ACTIVE</Typography>
+                                            </Box>
+                                        </Paper>
+                                    ))}
+                                </Box>
+                            </Box>
+                        )}
+
                         {/* Recent Activity */}
                         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Typography variant="h6" sx={{ fontWeight: 900 }}>กิจกรรมล่าสุด</Typography>
@@ -295,6 +410,22 @@ export default function OperatorDashboard() {
                     </Box>
                 </Fade>
             </Container>
+            {/* Logout Confirmation Dialog */}
+            <Dialog open={logoutOpen} onClose={() => setLogoutOpen(false)} PaperProps={{ sx: { borderRadius: 5, p: 1 } }}>
+                <DialogTitle sx={{ fontWeight: 900, color: 'primary.main', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <WarningAmber sx={{ color: 'error.main' }} />
+                    ออกจากระบบ
+                </DialogTitle>
+                <DialogContent>
+                    <Typography sx={{ fontWeight: 600, color: 'text.secondary' }}>
+                        คุณต้องการออกจากระบบใช่หรือไม่?
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+                    <Button onClick={() => setLogoutOpen(false)} variant="outlined" sx={{ borderRadius: 3, fontWeight: 800, textTransform: 'none' }}>ยกเลิก</Button>
+                    <Button onClick={handleLogout} variant="contained" color="error" sx={{ borderRadius: 3, fontWeight: 800, textTransform: 'none' }}>ออกจากระบบ</Button>
+                </DialogActions>
+            </Dialog>
         </Box >
     );
 }

@@ -15,7 +15,7 @@ export const userKilnRoutes = (app: Elysia) =>
         })
         .group('/users/:id/kilns', (group) =>
             group
-                .onBeforeHandle(({ user, set }) => {
+                .onBeforeHandle(({ user, set }: any) => {
                     if (!user) {
                         set.status = 401;
                         return { error: 'Unauthorized' };

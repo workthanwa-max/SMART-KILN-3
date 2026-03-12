@@ -112,7 +112,7 @@ export default function AssignKilns() {
                                             🔗 การมอบหมายงาน
                                         </Typography>
                                         <Typography variant="h6" color="primary.main" sx={{ fontWeight: 700, mt: 0.5, opacity: 0.8 }}>
-                                            บริหารจัดการความรับผิดชอบ และจับคู่พนักงานกับเตาเผาในระบบ
+                                            บริหารจัดการความรับผิดชอบ และจับคู่นวัตกรกับเตาเผาในระบบ
                                         </Typography>
                                     </Grid>
                                     <Grid size={{ xs: 12, md: 4 }} sx={{ textAlign: { md: 'right' } }}>
@@ -125,7 +125,7 @@ export default function AssignKilns() {
                                             </Avatar>
                                             <Box sx={{ textAlign: 'left' }}>
                                                 <Typography variant="caption" sx={{ fontWeight: 800, color: 'primary.main', display: 'block', opacity: 0.6 }}>
-                                                    พนักงานทั้งหมด
+                                                    นวัตกรทั้งหมด
                                                 </Typography>
                                                 <Typography variant="h6" sx={{ fontWeight: 950, lineHeight: 1, color: 'primary.main' }}>
                                                     {stats.totalOps} คน
@@ -151,7 +151,7 @@ export default function AssignKilns() {
                                     }}>
                                         <Box sx={{ p: 3, borderBottom: '1px solid #f1f5f9', bgcolor: '#f8fafc' }}>
                                             <Typography variant="subtitle1" sx={{ fontWeight: 900, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <Groups sx={{ color: 'primary.main' }} /> รายชื่อพนักงาน
+                                                <Groups sx={{ color: 'primary.main' }} /> รายชื่อนวัตกร
                                             </Typography>
                                             <TextField
                                                 fullWidth
@@ -175,7 +175,7 @@ export default function AssignKilns() {
                                                 <Box sx={{ p: 4, textAlign: 'center' }}><CircularProgress size={30} /></Box>
                                             ) : filteredOperators.length === 0 ? (
                                                 <Box sx={{ p: 4, textAlign: 'center' }}>
-                                                    <Typography variant="body2" color="text.secondary">ไม่พบข้อมูลพนักงาน</Typography>
+                                                    <Typography variant="body2" color="text.secondary">ไม่พบข้อมูลนวัตกร</Typography>
                                                 </Box>
                                             ) : (
                                                 filteredOperators.map((op) => (
@@ -238,10 +238,10 @@ export default function AssignKilns() {
                                                         <Handyman sx={{ fontSize: 50, color: '#cbd5e1' }} />
                                                     </Box>
                                                     <Typography variant="h5" sx={{ fontWeight: 900, color: '#64748b', mb: 1 }}>
-                                                        ยังไม่มีการเลือกพนักงาน
+                                                        ยังไม่มีการเลือกนวัตกร
                                                     </Typography>
                                                     <Typography color="text.secondary" sx={{ fontWeight: 500 }}>
-                                                        โปรดเลือกพนักงานจากรายการด้านซ้าย เพื่อจัดการการมอบหมายเตา
+                                                        โปรดเลือกนวัตกรจากรายการด้านซ้าย เพื่อจัดการการมอบหมายเตา
                                                     </Typography>
                                                 </Box>
                                             </Zoom>
@@ -293,12 +293,15 @@ export default function AssignKilns() {
                                                             '&:hover': { bgcolor: '#fff', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }
                                                         }}>
                                                             <Stack direction="row" alignItems="center" spacing={2.5}>
-                                                                <Avatar sx={{
-                                                                    bgcolor: '#fff', color: 'secondary.main',
-                                                                    border: '1px solid #f1f5f9', width: 50, height: 50,
-                                                                    borderRadius: 3
-                                                                }}>
-                                                                    <LocalFireDepartment />
+                                                                <Avatar
+                                                                    src={k.image}
+                                                                    sx={{
+                                                                        bgcolor: '#fff', color: 'secondary.main',
+                                                                        border: '1px solid #f1f5f9', width: 50, height: 50,
+                                                                        borderRadius: 3
+                                                                    }}
+                                                                >
+                                                                    {!k.image && <LocalFireDepartment />}
                                                                 </Avatar>
                                                                 <Box>
                                                                     <Typography sx={{ fontWeight: 800, fontSize: '1.1rem', color: '#0f172a' }}>{k.name}</Typography>
@@ -324,7 +327,7 @@ export default function AssignKilns() {
                                                     ➕ มอบหมายเตาใหม่
                                                 </Typography>
                                                 <Typography variant="body2" sx={{ mb: 3, fontWeight: 600, color: '#64748b' }}>
-                                                    เลือกเตาเผาที่พร้อมใช้งานเพื่อมอบหมายให้พนักงานดูแลรับผิดชอบ
+                                                    เลือกเตาเผาที่พร้อมใช้งานเพื่อมอบหมายให้นวัตกรดูแลรับผิดชอบ
                                                 </Typography>
 
                                                 <Grid container spacing={2}>
